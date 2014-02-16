@@ -9,7 +9,6 @@ int convertOutput(int msb, int lsb);
 int main(int argc, char *argv[]) {
 	int fd;
 	fd = wiringPiI2CSetup(0x1E);
-	wiringPiSetup();
 	int lcd = lcdInit(2,16,4,11,10,0,1,2,3,0,0,0,0);
 	lcdClear(lcd);
 	lcdHome(lcd);
@@ -20,14 +19,14 @@ int main(int argc, char *argv[]) {
 			while(!(wiringPiI2CReadReg8(fd, 0x09) & 0x01));
 			//int output = wiringPiI2CReadReg8(fd, 0x3D);
 			int xOutput = convertOutput(wiringPiI2CReadReg8(fd, 0x03), wiringPiI2CReadReg8(fd, 0x04));
-			int yOutput = convertOutput(wiringPiI2CReadReg8(fd, 0x07), wiringPiI2CReadReg8(fd, 0x08));
-			int zOutput = convertOutput(wiringPiI2CReadReg8(fd, 0x05), wiringPiI2CReadReg8(fd, 0x06));
-			//printf("\ec");
-			//printf("xOutput is: %d \n", xOutput);
-			//printf("yOutput is: %d \n", yOutput);
-			//printf("zOutput is: %d \n", zOutput);
-			lcdPrintf(lcd,"x:%5d y:%5d z:%5d         ",xOutput,yOutput,zOutput);
-		}
+			int yOutput = convertOutput(wiringPiI2CReadReg8(fd, 0x05), wiringPiI2CReadReg8(fd, 0x06));
+			int zOutput = convertOutput(wiringPiI2CReadReg8(fd, 0x07), wiringPiI2CReadReg8(fd, 0x08));
+			printf("\ec");
+			printf("xOutput is: %d \n", xOutput);
+			printf("yOutput is: %d \n", yOutput);
+			printf("zOutput is: %d \n", zOutput);
+			lcdClear(lcd);
+			lcdPrintf(lcd,"x",}
 	}
 	return 0;
 
