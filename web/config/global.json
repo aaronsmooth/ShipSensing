@@ -1,0 +1,14 @@
+{
+    "applications": {
+        "Room Security Alert System": {
+            "applicationId": "GabAeJSBADI5LJzFSdTzBX7Ru4Ns2Kq2UMhtXaI8", 
+            "masterKey": "YCjC2zKewebezTEZhBKY4NDKwhgsh0BsPBLyNtoq"
+        }, 
+        "_default": {
+            "link": "Room Security Alert System"
+        }
+    }, 
+    "global": {
+        "parseVersion": "1.2.16"
+    }
+}
