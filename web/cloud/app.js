@@ -24,7 +24,7 @@ app.get('*', function(req, res) {
     Parse.Cloud.useMasterKey();
     var Activity = Parse.Object.extend("Activity"),
         activityQuery = new Parse.Query(Activity);
-        activityQuery.descending("enteredAt");
+    activityQuery.descending("enteredAt");
     activityQuery.find({
         success: function(results) {
             res.render('content', {

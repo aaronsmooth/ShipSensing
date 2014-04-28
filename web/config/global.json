@@ -1,14 +1,14 @@
 {
     "applications": {
-        "Room Security Alert System": {
-            "applicationId": "GabAeJSBADI5LJzFSdTzBX7Ru4Ns2Kq2UMhtXaI8", 
-            "masterKey": "YCjC2zKewebezTEZhBKY4NDKwhgsh0BsPBLyNtoq"
+        "Ship Sensing Project": {
+            "applicationId": "YwcaugA0e48pvA2Rsmj7yIT9GbOHCPitW3LDPnlq", 
+            "masterKey": "wSS8XwPkOotajL9ZSSByLvKiCVPAsaYkH7mJAK6J"
         }, 
         "_default": {
-            "link": "Room Security Alert System"
+            "link": "Ship Sensing Project"
         }
     }, 
     "global": {
-        "parseVersion": "1.2.16"
+        "parseVersion": "1.2.18"
     }
 }
