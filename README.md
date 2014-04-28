@@ -1,4 +1,4 @@
-rsas-pi
+Ship Sensing
 =======
 
-Room Security Alert System - Raspberry Pi
+Dock monitor system 
