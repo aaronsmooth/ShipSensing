@@ -1,0 +1,14 @@
+{
+    "applications": {
+        "VesselAPI": {
+            "applicationId": "CUC2FTRPRJcPas2CUDUIRGLKvUbqQ7EYPwkG64og", 
+            "masterKey": "tTcBjdUOcwd4IW320vprBitCbnT58VGAuwUJrxG0"
+        }, 
+        "_default": {
+            "link": "VesselAPI"
+        }
+    }, 
+    "global": {
+        "parseVersion": "1.2.18"
+    }
+}
