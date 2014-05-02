@@ -16,9 +16,9 @@ var express = require('express'),
 // vesselapi.parseapp.com/lookup?key=imo&val=9187863
 
 app.get('/lookup?', function(req, res) {
-
     var key = req.query.key,
         val = req.query.val;
+
     if (!key || !val) {
         res.redirect('/');
     }
@@ -26,7 +26,6 @@ app.get('/lookup?', function(req, res) {
     Parse.Cloud.useMasterKey();
     var Vessel = Parse.Object.extend("Vessel"),
         vesselQuery = new Parse.Query(Vessel);
-    console.log("key:" + key + " val:" + val);
     vesselQuery.equalTo(key, val);
     vesselQuery.first({
         success: function(result) {
