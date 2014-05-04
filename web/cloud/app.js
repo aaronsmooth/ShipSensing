@@ -6,7 +6,7 @@
  */
 
 var express = require('express'),
-    moment = require('moment'),
+    js2xml = require('cloud/lib/js2xml'),
     expressLayouts = require('cloud/express-layouts'),
     _ = require('underscore'),
     app = express();
@@ -20,15 +20,71 @@ app.use(expressLayouts);
 app.use(express.bodyParser()); // Populate req.body
 app.use(express.methodOverride());
 
+// dockmonitor.parseapp.com/activity?limit=10&format=json
+app.get('/activity?', function(req, res) {
+    var limit = req.query.limit || 10,
+        format = req.query.format,
+        vesselApiUrl = "http://vesselapi.parseapp.com/lookup";
+
+    Parse.Cloud.useMasterKey();
+    var Activity = Parse.Object.extend("Activity"),
+        activityQuery = new Parse.Query(Activity),
+        activities = [];
+    activityQuery.limit(limit);
+    activityQuery.descending("dockedAt");
+    activityQuery.find().then(function(results) {
+        var promise = Parse.Promise.as();
+        _.each(results, function(result) {
+            result = result.attributes;
+            result.image = result.image ? result.image._url : undefined;
+            promise = promise.then(function() {
+                return Parse.Cloud.httpRequest({
+                    url: vesselApiUrl,
+                    params: {
+                        key: "mmsi",
+                        val: result.vesselMmsi,
+                        format: "json"
+                    }
+                }).then(function(httpResponse) {
+                        vesselInfo = JSON.parse(httpResponse.text);
+                        result.vesselInfo = vesselInfo.result;
+                        activities.push(result);
+                    },
+                    function(error) {
+                        res.json({
+                            error: error.code + ": " + error.message
+                        });
+                    });
+            });
+        });
+        return promise;
+    }).then(function() {
+            format != "xml" ? (
+                res.json({
+                    activities: activities
+                })) : res.header('Content-Type', 'text/xml').send(js2xml.toXML({
+                activities: activities
+            }, {
+                header: true,
+                indent: '  '
+            }));
+        },
+        function(error) {
+            res.json({
+                error: error.code + ": " + error.message
+            });
+        });
+});
+
 app.get('*', function(req, res) {
     Parse.Cloud.useMasterKey();
     var Activity = Parse.Object.extend("Activity"),
         activityQuery = new Parse.Query(Activity);
-    activityQuery.descending("enteredAt");
+    activityQuery.descending("dockedAt");
     activityQuery.find({
-        success: function(results) {
+        success: function(activities) {
             res.render('content', {
-                activities: results
+                activities: activities
             });
         },
         error: function(error) {

@@ -32,7 +32,7 @@ app.get('/lookup?', function(req, res) {
                 message: "No vessel found with [" + key + " = " + val + "]"
             }
             result.photo = result.photo ? result.photo._url : undefined;
-            result = format != "xml" ? (
+            format != "xml" ? (
                 res.json({
                     result: result
                 })) : res.header('Content-Type', 'text/xml').send(js2xml.toXML({
