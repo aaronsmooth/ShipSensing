@@ -21,6 +21,7 @@ app.use(express.bodyParser()); // Populate req.body
 app.use(express.methodOverride());
 
 // dockmonitor.parseapp.com/activity?limit=10&format=json
+// dockmonitor.parseapp.com/activity?mmsi=636090647&limit=2&format=xml
 app.get('/activity?', function(req, res) {
     var limit = req.query.limit || 10,
         format = req.query.format,
