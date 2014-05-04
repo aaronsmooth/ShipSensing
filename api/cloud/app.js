@@ -52,16 +52,16 @@ app.get('/lookup?', function(req, res) {
 });
 
 app.get('*', function(req, res) {
-    var error = {
-        error: "Invalid input value(s)",
+    var errorJson = {
+        error: "Invalid input value(s).",
         example: "http://vesselapi.parseapp.com/lookup?key=name&val=Isodora&format=json",
         queryParameter: {
-            key: "Search key (mmsi, imo, id, name)",
-            val: "Value of the key",
-            format: "Format of the result (json, xml)"
+            key: "Search key. [mmsi, imo, id, name]",
+            val: "Value of the key.",
+            format: "Format of the result. [json, xml]"
         }
-    }
-    res.json(error);
+    }, errorXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><error>Invalid input value(s).</error>\n<example>http://vesselapi.parseapp.com/lookup?key=name&amp;val=Isodora&amp;format=json</example>\n<queryParameter>\n\t<key>Search key (mmsi, imo, id, name)</key>\n<val>Value of the key</val>\n\t<format>Format of the result. [json, xml]</format>\n</queryParameter></root>";
+    req.query.format != "xml" ? res.json(errorJson) : res.header('Content-Type', 'text/xml').send(errorXml);
 });
 
 app.listen();
