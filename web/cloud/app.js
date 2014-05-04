@@ -24,13 +24,15 @@ app.use(express.methodOverride());
 app.get('/activity?', function(req, res) {
     var limit = req.query.limit || 10,
         format = req.query.format,
+        mmsi = req.query.mmsi,
         vesselApiUrl = "http://vesselapi.parseapp.com/lookup";
 
     Parse.Cloud.useMasterKey();
     var Activity = Parse.Object.extend("Activity"),
         activityQuery = new Parse.Query(Activity),
         activities = [];
-    activityQuery.limit(limit);
+    activityQuery.limit(limit > 0 ? limit : 10);
+    mmsi ? activityQuery.equalTo("vesselMmsi", mmsi) : "";
     activityQuery.descending("dockedAt");
     activityQuery.find().then(function(results) {
         var promise = Parse.Promise.as();
