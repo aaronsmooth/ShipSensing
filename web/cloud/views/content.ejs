@@ -18,21 +18,21 @@
               </thead>
               <tbody>
                 <% for(var i=0; i < activities.length; i++) {
-                    var date = new Date(activities[i].get('enteredAt').toString()),
+                    var date = new Date(activities[i].get('dockedAt').toString()),
                         hours = date.getHours();
                         date.setHours(hours - 8);
-                    var enteredTime = date.toLocaleTimeString(),
-                        enteredHour = enteredTime.substring(0,2),
-                        enteredTime = enteredHour > 12 ? enteredHour - 12 + enteredTime.substring(2, enteredTime.length) + " PM": enteredTime + " AM",
-                        enteredDate = date.toLocaleDateString(),
-                        enteredLocalTime = new Date %>
+                    var dockedTime = date.toLocaleTimeString(),
+                        dockedHour = dockedTime.substring(0,2),
+                        dockedTime = dockedHour > 12 ? dockedHour - 12 + dockedTime.substring(2, dockedTime.length) + " PM": dockedTime + " AM",
+                        dockedDate = date.toLocaleDateString(),
+                        dockedLocalTime = new Date %>
                     <tr id="<%= activities[i].id%>" style="cursor:pointer">
-                      <td><%= enteredDate %></td>
-                      <td><%= enteredTime %></td>
+                      <td><%= dockedDate %></td>
+                      <td><%= dockedTime %></td>
                       <td><span class="glyphicon glyphicon-picture"></span></td>
                     </tr>
                     <tr style="cursor:default">
-                      <td colspan="3"><img src="<%= activities[i].get('image')%>" id="img-<%= activities[i].id%>" class="img-responsive hidden" alt="image"></td>
+                      <td colspan="3"><img src="<%= activities[i].get('image').url()%>" id="img-<%= activities[i].id%>" class="img-responsive hidden" alt="image"></td>
                     </tr>
                 <% } %>
               </tbody>

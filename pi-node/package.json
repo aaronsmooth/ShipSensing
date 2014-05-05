@@ -1,0 +1,27 @@
+{
+    "name": "ship_sensing",
+    "description": "Dock Monitoring System for Port of Tacoma",
+    "version": "1.0.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/aaronsmooth/ShipSensing.git"
+    },
+    "dependencies": {
+        "express": "3.x",
+        "wiring-pi": "1.x",
+        "parse": "1.2.x",
+        "raspicam": "0.2.x",
+        "util": "0.10.x",
+        "mime": "1.2.x"
+    },
+    "engines": {
+        "node": "0.10.x",
+        "npm": "1.3.x"
+    },
+    "author": [
+        "Pasang Sherpa",
+        "Aaron Nelson", 
+        "Jonathan Forbes", 
+        "Takatoshi Tomoyose"
+    ]
+}
