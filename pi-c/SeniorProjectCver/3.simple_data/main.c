@@ -1,22 +1,3 @@
-/*
-	libxbee - a C library to aid the use of Digi's XBee wireless modules
-	          running in API mode.
-
-	Copyright (C) 2009 onwards  Attie Grande (attie@attie.co.uk)
-
-	libxbee is free software: you can redistribute it and/or modify it
-	under the terms of the GNU Lesser General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	libxbee is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
-	GNU Lesser General Public License for more details.
-
-	You should have received a copy of the GNU Lesser General Public License
-	along with libxbee. If not, see <http://www.gnu.org/licenses/>.
-*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,8 +5,13 @@
 #include <time.h>
 #include <xbee.h>
 
-char message[8] = "00000000";;
+#include <wiringPi.h>
+#include <wiringSerial.h>
 
+
+char message[8] = "00000000";
+int leng = 8;
+/*
 void myCB(struct xbee *xbee, struct xbee_con *con, struct xbee_pkt **pkt, void **data) {
 	if ((*pkt)->dataLen > 0) {
 		if ((*pkt)->data[0] == '@') {
@@ -36,15 +22,33 @@ void myCB(struct xbee *xbee, struct xbee_con *con, struct xbee_pkt **pkt, void *
 	}
 	printf("tx: %d\n", xbee_conTx(con, NULL, "Hello\r\n"));
 }
+*/
+void setMessage(char firstChar, time_t rawtime) {
+	struct tm * timeinfo;
+	time(&rawtime);
+        timeinfo = localtime (&rawtime);
+
+        message[0] = firstChar + '0';
+        message[1] = timeinfo->tm_sec + '0'; //0 seconds
+        message[2] = timeinfo->tm_min + '0'; //31 minutes
+        message[3] = timeinfo->tm_hour + '0'; //20th hour or 8pm
+        message[4] = timeinfo->tm_wday + '0'; //
+        message[5] = timeinfo->tm_mday + '0';
+        message[6] = (timeinfo->tm_mon + 1) + '0';//months since  Jan
+        message[7] = (timeinfo->tm_year - 100) + '0';//years since 1900
+}
 
 int main(void) {
+	int fd;
         time_t rawtime;
-	struct tm * timeinfo;
 	void *d;
 	struct xbee *xbee;
 	struct xbee_con *con;
 	struct xbee_conAddress address;
+	struct xbee_pkt *pkt;
 	xbee_err ret;
+	int *datLen;
+	datLen = &leng;
 
 	if ((ret = xbee_setup(&xbee, "xbeeZB", "/dev/ttyAMA0", 9600)) != XBEE_ENONE) {
 		printf("ret: %d (%s)\n", ret, xbee_errorToStr(ret));
@@ -58,9 +62,9 @@ int main(void) {
 	address.addr64[2] = 0xA2;
 	address.addr64[3] = 0x00;
 	address.addr64[4] = 0x40;
-	address.addr64[5] = 0x8B;
-	address.addr64[6] = 0xD0;
-	address.addr64[7] = 0xF8;
+	address.addr64[5] = 0xA0;
+	address.addr64[6] = 0x4B;
+	address.addr64[7] = 0x60;
 	if ((ret = xbee_conNew(xbee, &con, "Data", &address)) != XBEE_ENONE) {
 		xbee_log(xbee, -1, "xbee_conNew() returned: %d (%s)", ret, xbee_errorToStr(ret));
 		return ret;
@@ -70,50 +74,51 @@ int main(void) {
 		xbee_log(xbee, -1, "xbee_conDataSet() returned: %d", ret);
 		return ret;
 	}
-
+/*
 	if ((ret = xbee_conCallbackSet(con, myCB, NULL)) != XBEE_ENONE) {
 		xbee_log(xbee, -1, "xbee_conCallbackSet() returned: %d", ret);
 		return ret;
 	}
-	
-	/* get current time */
-	time(&rawtime);
-	/* get local time from current time */
-	timeinfo = localtime (&rawtime);
-
+*/
 	int i;
 	/* kick off the chain reaction! */
 	for (;;) {
 		void *p;
-		time(&rawtime);
-		
-		timeinfo = localtime (&rawtime);
-		//printf("time %d", timeinfo->tm_sec );
-
-		message[0] = 'H' + '0';
-		message[1] = timeinfo->tm_sec + '0'; //0 seconds
-		message[2] = timeinfo->tm_min + '0'; //31 minutes
-		message[3] = timeinfo->tm_hour + '0'; //20th hour or 8pm
-		message[4] = timeinfo->tm_wday + '0'; //
-		message[5] = timeinfo->tm_mday + '0';
-		message[6] = timeinfo->tm_mon + '0';
-		message[7] = timeinfo->tm_year + '0';
-		
+		setMessage('H', rawtime);
+		/* send a message */
 		xbee_conTx(con, NULL, message);
-		for (i = 0; i < 8;i ++) {
-			printf("%d ", message[i] - '0');
-		}
+		//for (i = 0; i < 8;i ++) {
+		//	printf("%d ", message[i] - '0');
+		//}
 		printf("\n");
 
+		if((ret = xbee_conRx(con, &pkt, NULL)) != XBEE_ENONE) {
+			//printf("%s %i\n ",xbee_errorToStr(ret),ret);
+		} else {
+			printf("\n");
+			//for (i = 0; i < pkt->dataLen; i++) {
+				printf("Rx Length: %i\nRx Data: ", pkt->dataLen);
+				for (i = 0; i < pkt->dataLen; i++) {
+					printf("%i ", pkt->data[i]);
+				}
+
+			printf("\nSOMETHING WAS RECEIVED\n");
+
+			if ((ret = xbee_pktFree(pkt)) != XBEE_ENONE) {
+				printf("%s %i\n", xbee_errorToStr(ret), ret);
+			}
+		}
+		/* if conRx returns XBEE_ENONE then there is data to read */
+/*
 		if ((ret = xbee_conCallbackGet(con, (xbee_t_conCallback*)&p)) != XBEE_ENONE) {
 			xbee_log(xbee, -1, "xbee_conCallbackGet() returned: %d", ret);
 			return ret;
 		}
-
+*/
 		//printf("\n%d\n", ret);
 		if (p == NULL) break;
 
-		usleep(1000000);
+		//usleep(1000000);
 	}
 	
 	if ((ret = xbee_conEnd(con)) != XBEE_ENONE) {
