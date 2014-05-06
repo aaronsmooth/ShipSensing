@@ -21,12 +21,12 @@ var http = require('http'),
 
 Parse.initialize("YwcaugA0e48pvA2Rsmj7yIT9GbOHCPitW3LDPnlq", "KI3qObjuxgfRLTosry7qgmOOFErXEYfuzxgJkiEg");
 camera.start();
-http.createServer(function(req, resp) {
-    resp.writeHead(200, {
+http.createServer(function(req, res) {
+    res.writeHead(200, {
         "Content-Type": "text/plain"
     });
-    resp.write("Check the console bro..");
-    resp.end();
+    res.write("Check the console bro..");
+    res.end();
 }).listen(8000);
 
 function recordActivity(path, value, callback) {
