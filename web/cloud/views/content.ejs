@@ -11,28 +11,42 @@
             <table class="table table-hover">
               <thead>
                 <tr>
+                  <th>Image</th>
+                  <th>Vessel</th>
                   <th>Date</th>
                   <th>Time</th>
-                  <th>Image</th>
                 </tr>
               </thead>
               <tbody>
-                <% for(var i=0; i < activities.length; i++) {
-                    var date = new Date(activities[i].get('dockedAt').toString()),
+                <%  
+                    var activities = results.activities;
+                    for(var i=0; i < 3; i++) {
+                    var date = new Date(activities[i].dockedAt),
                         hours = date.getHours();
                         date.setHours(hours - 8);
                     var dockedTime = date.toLocaleTimeString(),
                         dockedHour = dockedTime.substring(0,2),
                         dockedTime = dockedHour > 12 ? dockedHour - 12 + dockedTime.substring(2, dockedTime.length) + " PM": dockedTime + " AM",
-                        dockedDate = date.toLocaleDateString(),
-                        dockedLocalTime = new Date %>
+                        dockedDate = date.toLocaleDateString() %>
                     <tr id="<%= activities[i].id%>" style="cursor:pointer">
-                      <td><%= dockedDate %></td>
-                      <td><%= dockedTime %></td>
-                      <td><span class="glyphicon glyphicon-picture"></span></td>
+                      <td><img src="<%= activities[i].image%>" height=100 width=100 alt="image"></td></td>
+                      <td><h4><%= activities[i].vesselInfo.name %></h4></td>
+                      <td><h4><%= dockedDate %></h4></td>
+                      <td><h4><%= dockedTime %></h4></td>
                     </tr>
-                    <tr style="cursor:default">
-                      <td colspan="3"><img src="<%= activities[i].get('image').url()%>" id="img-<%= activities[i].id%>" class="img-responsive hidden" alt="image"></td>
+                    <tr style="cursor:default" id="img-<%= activities[i].id%>" class="hidden">
+                      <td colspan="3">
+                        <img src="<%= activities[i].vesselInfo.photo%>" height=400 width=600 alt="image">
+                      </td>
+                      <td colspan="1">
+                        <h4>Name : <%= activities[i].vesselInfo.name %></h4>
+                        <h4>MMSI : <%= activities[i].vesselInfo.mmsi %></h4>
+                        <h4>IMO : <%= activities[i].vesselInfo.imo %></h4>
+                        <h4>Year Built : <%= activities[i].vesselInfo.yearBuilt %></h4>
+                        <h4>Length : <%= activities[i].vesselInfo.length %>m</h4>
+                        <h4>Breadth : <%= activities[i].vesselInfo.breadth %>m</h4>
+                        <h4>Gross Tonnage : <%= activities[i].vesselInfo.grossTonnage %></h4>
+                      </td>
                     </tr>
                 <% } %>
               </tbody>
