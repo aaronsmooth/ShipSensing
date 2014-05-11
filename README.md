@@ -9,6 +9,12 @@ This project includes four sub projects.
 4. Arduino - Handles sensor logic and communicates with PI via XBee
 5. Web - Interface to check out dock activity. Also has an api to get the dock activity.
 
+## Installing Project
+
+```
+$ git clone git://github.com/aaronsmooth/ShipSensing.git
+```
+======
 ## Using API's
 
 ###Vessel API
@@ -34,7 +40,7 @@ $ curl --request GET "http://vesselapi.parseapp.com/lookup?key=name&val=TUGELA&f
 To search for activites you must create a search field that passes a fully-qualified URL content request to the web API.
 
 #####Query Parameters
-* limit - Limit of the search results. Default is 10. [none  or (1 - whatever)]
+* limit - Limit of the search results. Default is 10. Set limit to "none" to get all results. [1 to whatever number you want]
 * format - Format of the result. [json, xml]
 * mmsi, imo, name and id can be used to filter results. 
 
@@ -47,15 +53,9 @@ Examples of fully-qualified URLs:
 ```
 $ curl --request GET "http://dockmonitor.parseapp.com/activity?limit=none&format=xml"
 ```
-
-## Installing Project
-
-```
-$ git clone git://github.com/aaronsmooth/ShipSensing.git
-```
+======
 
 ## Building Project
-
 
 ###Pi-Node
 
