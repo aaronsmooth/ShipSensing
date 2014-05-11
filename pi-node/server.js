@@ -5,7 +5,7 @@
  *  @author - Takatoshi Tomoyose
  */
 
-var http = require('http'),
+var express = require('express'),
     fs = require('fs'),
     util = require('util'),
     mime = require('mime'),
@@ -17,17 +17,12 @@ var http = require('http'),
         encoding: "jpg",
         timelapse: 200,
         timeout: 86400000
-    });
+    }),
+    port = process.env.PORT || 8000,
+    app = express();
 
 Parse.initialize("YwcaugA0e48pvA2Rsmj7yIT9GbOHCPitW3LDPnlq", "KI3qObjuxgfRLTosry7qgmOOFErXEYfuzxgJkiEg");
 camera.start();
-http.createServer(function(req, res) {
-    res.writeHead(200, {
-        "Content-Type": "text/plain"
-    });
-    res.write("Check the console bro..");
-    res.end();
-}).listen(8000);
 
 function recordActivity(path, value, callback) {
     var Activity = Parse.Object.extend("Activity"),
@@ -45,3 +40,17 @@ function recordActivity(path, value, callback) {
         callback(activity);
     });
 }
+
+app.post("/activity/add", function(req, res) {
+    /* some server side logic */
+    console.log("add activity")
+    res.send("OK");
+});
+
+app.get("*", function(req, res) {
+    res.send("OK");
+});
+
+app.listen(port, function() {
+    console.log("Listening on " + port);
+});
