@@ -48,7 +48,7 @@ Examples of fully-qualified URLs:
 
 1. http://dockmonitor.parseapp.com/activity?limit=2&format=json
 2. http://dockmonitor.parseapp.com/activity?limit=none&format=json
-3. http://dockmonitor.parseapp.com/activity?mmsi=311695000&limit=2&format=xml
+3. http://dockmonitor.parseapp.com/activity?mmsi=248264000&limit=2&format=xml
 
 ```
 $ curl --request GET "http://dockmonitor.parseapp.com/activity?limit=none&format=xml"
