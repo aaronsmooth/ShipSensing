@@ -1,6 +1,5 @@
 Dock monitor system 
 =======
-------
 
 This project includes four sub projects.
 
@@ -15,16 +14,14 @@ This project includes four sub projects.
 
 ```
 $ git clone git://github.com/aaronsmooth/ShipSensing.git
-
 ```
 
 ## Building Project
-------
+
 
 ###Pi-Node
 
 #####Install and setup Node
-
 ```
 // Update package manager
 $ sudo apt-get upgrade && sudo apt-get update
@@ -37,16 +34,13 @@ $ tar -xvzf node-v0.10.2-linux-arm-pi.tar.gz
 // add the bin dir to your PATH
 $ NODE_JS_HOME=/home/pi/node-v0.10.2-linux-arm-pi 
 PATH=$PATH:$NODE_JS_HOME/bin
-
 ```
 
 #####Running Node server
-
 ```
 // Go to "pi-node" directory of the project
 $ npm install
 
 // Wait for all dependencies to be installed and then run the server
 $ node server.js
-
 ```
