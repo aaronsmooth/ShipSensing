@@ -68,8 +68,7 @@ $ sudo apt-get upgrade && sudo apt-get update
 $ wget http://nodejs.org/dist/v0.10.2/node-v0.10.2-linux-arm-pi.tar.gz
 $ tar -xvzf node-v0.10.2-linux-arm-pi.tar.gz
 
-// Set NODE_JS_HOME variable to the directory where you un-tarred Node, and 
-// add the bin dir to your PATH
+// Set NODE_JS_HOME variable to the directory where you un-tarred Node, and add the bin dir to your PATH
 $ NODE_JS_HOME=/home/pi/node-v0.10.2-linux-arm-pi 
 $ PATH=$PATH:$NODE_JS_HOME/bin
 ```
