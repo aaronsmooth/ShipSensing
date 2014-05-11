@@ -87,40 +87,40 @@ int main(void) {
 		setMessage('H', rawtime);
 		/* send a message */
 		xbee_conTx(con, NULL, message);
-		//for (i = 0; i < 8;i ++) {
-		//	printf("%d ", message[i] - '0');
-		//}
+		/* print the sent message */
+		printf("\nTx Message : ");
+		for (i = 0; i < 8;i ++) {
+			printf("%x ", message[i] - '0');
+		}
 		printf("\n");
-
-		if((ret = xbee_conRx(con, &pkt, NULL)) != XBEE_ENONE) {
+		//usleep(2000000);
+		/* block until a message was received */
+		while((ret = xbee_conRx(con, &pkt, NULL)) != XBEE_ENONE);
 			//printf("%s %i\n ",xbee_errorToStr(ret),ret);
-		} else {
-			printf("\n");
-			//for (i = 0; i < pkt->dataLen; i++) {
-				printf("Rx Length: %i\nRx Data: ", pkt->dataLen);
-				for (i = 0; i < pkt->dataLen; i++) {
-					printf("%i ", pkt->data[i]);
-				}
 
-			printf("\nSOMETHING WAS RECEIVED\n");
-
-			if ((ret = xbee_pktFree(pkt)) != XBEE_ENONE) {
-				printf("%s %i\n", xbee_errorToStr(ret), ret);
+		printf("\n");
+		
+		/* If the packet length was 27 then it's a valid message */
+		//if (pkt->dataLen == 27) {
+			for (i = 0; i < leng; i++) {
+				message[i] = pkt->data[18 + i];	//update message with received data
 			}
+			printf("Rx Data:     ");
+			for (i = 0; i < leng; i++) {
+				printf("%x ", message[i]);
+			}
+		//}
+			//usleep(1000000);
+		if ((ret = xbee_pktFree(pkt)) != XBEE_ENONE) {
+			printf("%s %i\n", xbee_errorToStr(ret), ret);
 		}
-		/* if conRx returns XBEE_ENONE then there is data to read */
-/*
-		if ((ret = xbee_conCallbackGet(con, (xbee_t_conCallback*)&p)) != XBEE_ENONE) {
-			xbee_log(xbee, -1, "xbee_conCallbackGet() returned: %d", ret);
-			return ret;
-		}
-*/
-		//printf("\n%d\n", ret);
+			//usleep(1000000);
+
 		if (p == NULL) break;
 
 		//usleep(1000000);
 	}
-	
+
 	if ((ret = xbee_conEnd(con)) != XBEE_ENONE) {
 		xbee_log(xbee, -1, "xbee_conEnd() returned: %d", ret);
 		return ret;
