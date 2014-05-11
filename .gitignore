@@ -1,0 +1,51 @@
+# C files
+Debug
+WiringPi
+libxbee.libxbee-v3
+.cproject
+main
+lcd
+
+# Object files
+*.o
+*.ko
+
+# Libraries
+*.lib
+*.a
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+
+lib-cov
+lcov.info
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+*.save
+
+pids
+logs
+results
+build
+.grunt
+
+node_modules
+node_modules/*
+*/node_modules/*
+npm-debug.log
+
+photo
+photo/*
