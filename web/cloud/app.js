@@ -22,7 +22,7 @@ app.use(express.methodOverride());
 
 // http://dockmonitor.parseapp.com/activity?limit=2&format=json
 // http://dockmonitor.parseapp.com/activity?limit=none&format=json
-// http://dockmonitor.parseapp.com/activity?mmsi=311695000&limit=2&format=xml
+// http://dockmonitor.parseapp.com/activity?mmsi=248264000&limit=2&format=xml
 app.get('/activity?', function(req, res) {
     var limit = req.query.limit || 10,
         format = req.query.format,
