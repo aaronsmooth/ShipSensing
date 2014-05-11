@@ -20,9 +20,9 @@ app.use(expressLayouts);
 app.use(express.bodyParser()); // Populate req.body
 app.use(express.methodOverride());
 
-// dockmonitor.parseapp.com/activity?limit=2&format=json
-// dockmonitor.parseapp.com/activity?limit=none&format=json
-// dockmonitor.parseapp.com/activity?mmsi=636090647&limit=2&format=xml
+// http://dockmonitor.parseapp.com/activity?limit=2&format=json
+// http://dockmonitor.parseapp.com/activity?limit=none&format=json
+// http://dockmonitor.parseapp.com/activity?mmsi=311695000&limit=2&format=xml
 app.get('/activity?', function(req, res) {
     var limit = req.query.limit || 10,
         format = req.query.format,

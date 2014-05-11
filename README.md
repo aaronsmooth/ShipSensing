@@ -29,8 +29,8 @@ Examples of fully-qualified URLs:
 
 1. http://vesselapi.parseapp.com/lookup?key=name&val=TUGELA&format=json
 2. http://vesselapi.parseapp.com/lookup?key=name&val=WORLD%20SPIRIT&format=xml
-3. http://vesselapi.parseapp.com/lookup?key=mmsi&val=636090647&format=json
-4. http://vesselapi.parseapp.com/lookup?key=imo&val=9187863&format=xml
+3. http://vesselapi.parseapp.com/lookup?key=mmsi&val=636015819&format=json
+4. http://vesselapi.parseapp.com/lookup?key=imo&val=9191319&format=xml
 
 ```
 $ curl --request GET "http://vesselapi.parseapp.com/lookup?key=name&val=TUGELA&format=json"
@@ -48,7 +48,7 @@ Examples of fully-qualified URLs:
 
 1. http://dockmonitor.parseapp.com/activity?limit=2&format=json
 2. http://dockmonitor.parseapp.com/activity?limit=none&format=json
-3. http://dockmonitor.parseapp.com/activity?mmsi=636090647&limit=2&format=xml
+3. http://dockmonitor.parseapp.com/activity?mmsi=311695000&limit=2&format=xml
 
 ```
 $ curl --request GET "http://dockmonitor.parseapp.com/activity?limit=none&format=xml"
@@ -68,10 +68,9 @@ $ sudo apt-get upgrade && sudo apt-get update
 $ wget http://nodejs.org/dist/v0.10.2/node-v0.10.2-linux-arm-pi.tar.gz
 $ tar -xvzf node-v0.10.2-linux-arm-pi.tar.gz
 
-// Set NODE_JS_HOME variable to the directory where you un-tarred Node, and 
-// add the bin dir to your PATH
+// Set NODE_JS_HOME variable to the directory where you un-tarred Node, and add the bin dir to your PATH
 $ NODE_JS_HOME=/home/pi/node-v0.10.2-linux-arm-pi 
-PATH=$PATH:$NODE_JS_HOME/bin
+$ PATH=$PATH:$NODE_JS_HOME/bin
 ```
 
 #####Running Node server

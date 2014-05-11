@@ -9,10 +9,10 @@ var express = require('express'),
     js2xml = require('cloud/lib/js2xml'),
     app = express();
 
-// vesselapi.parseapp.com/lookup?key=name&val=TUGELA&format=json
-// vesselapi.parseapp.com/lookup?key=name&val=WORLD%20SPIRIT&format=xml
-// vesselapi.parseapp.com/lookup?key=mmsi&val=636090647&format=json
-// vesselapi.parseapp.com/lookup?key=imo&val=9187863&format=xml
+// http://vesselapi.parseapp.com/lookup?key=name&val=TUGELA&format=json
+// http://vesselapi.parseapp.com/lookup?key=name&val=WORLD%20SPIRIT&format=xml
+// http://vesselapi.parseapp.com/lookup?key=mmsi&val=636015819&format=json
+// http://vesselapi.parseapp.com/lookup?key=imo&val=9191319&format=xml
 app.get('/lookup?', function(req, res) {
     var key = req.query.key,
         val = req.query.val,
