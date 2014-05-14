@@ -4,25 +4,14 @@
 #include <string.h>
 #include <time.h>
 #include <xbee.h>
-
-#include <wiringPi.h>
-#include <wiringSerial.h>
+//#include <curl/curl.h>
+//#include <wiringPi.h>
+//#include <wiringSerial.h>
 
 
 char message[8] = "00000000";
 int leng = 8;
-/*
-void myCB(struct xbee *xbee, struct xbee_con *con, struct xbee_pkt **pkt, void **data) {
-	if ((*pkt)->dataLen > 0) {
-		if ((*pkt)->data[0] == '@') {
-			xbee_conCallbackSet(con, NULL, NULL);
-			printf("*** DISABLED CALLBACK... ***\n");
-		}
-		printf("rx: [%s]\n", (*pkt)->data);
-	}
-	printf("tx: %d\n", xbee_conTx(con, NULL, "Hello\r\n"));
-}
-*/
+
 void setMessage(char firstChar, time_t rawtime) {
 	struct tm * timeinfo;
 	time(&rawtime);
@@ -41,6 +30,9 @@ void setMessage(char firstChar, time_t rawtime) {
 int main(void) {
 	int fd;
         time_t rawtime;
+	time_t lastHeartbeatTimeStamp;
+	time_t messageSentTimeStamp;
+	double seconds;
 	void *d;
 	struct xbee *xbee;
 	struct xbee_con *con;
@@ -49,7 +41,11 @@ int main(void) {
 	xbee_err ret;
 	int *datLen;
 	datLen = &leng;
-
+	int status;	//0 = normal mode, 1 = panic mode, 2 = startup mode
+	status = 2;
+	double heartbeatTimeElapsed;
+	double messageTimeElapsed;
+	
 	if ((ret = xbee_setup(&xbee, "xbeeZB", "/dev/ttyAMA0", 9600)) != XBEE_ENONE) {
 		printf("ret: %d (%s)\n", ret, xbee_errorToStr(ret));
 		return ret;
@@ -74,51 +70,125 @@ int main(void) {
 		xbee_log(xbee, -1, "xbee_conDataSet() returned: %d", ret);
 		return ret;
 	}
-/*
-	if ((ret = xbee_conCallbackSet(con, myCB, NULL)) != XBEE_ENONE) {
-		xbee_log(xbee, -1, "xbee_conCallbackSet() returned: %d", ret);
-		return ret;
-	}
-*/
+
 	int i;
-	/* kick off the chain reaction! */
+	double temp;
+	time(&lastHeartbeatTimeStamp);		//set initial timestamp 
+	
 	for (;;) {
-		void *p;
-		setMessage('H', rawtime);
+	  void *p;
+	  printf("\nCurrent Status = %i ", status);
+	  if (status == 0) {			//normal mode
+		/* block until a message was received or 30 minutes have passed since a message was received */
+		while(((ret = xbee_conRx(con, &pkt, NULL)) != XBEE_ENONE) || (difftime(lastHeartbeatTimeStamp, time(&rawtime))) > 1800);
+		/* check if 30 minutes passed that broke the block */
+		if (difftime(lastHeartbeatTimeStamp, time(&rawtime)) > 1800)
+		{
+			time(&lastHeartbeatTimeStamp);
+			time(&messageSentTimeStamp);
+			setMessage('H', rawtime);
+			xbee_conTx(con, NULL, message);
+			while(((ret = xbee_conRx(con, &pkt, NULL)) != XBEE_ENONE) || (difftime(messageSentTimeStamp, time(&rawtime))) > 120);
+			if (difftime(messageSentTimeStamp, time(&rawtime)) > 120) status = 1;
+			else
+			{       //message was received, process it
+                		/* If the packet length was 27 then it's a valid message */
+                		//if (pkt->dataLen == 27) {
+                        	char temp_char;
+                        	for (i = 0; i < leng; i++) {
+                                	temp_char = pkt->data[18 + i];
+                                	message[i] = temp_char; //update message with received data
+                        	}
+                        	printf("Rx Data:     ");
+                        	for (i = 0; i < leng; i++) {
+                                	printf("%x ", message[i]);
+                        	}
+                        	if (message[0] == 'A') status = 0;      //received acknowledgment, change to normal status
+                        	else status = 1;                        //received an unknown message, change to panic status
+                        	/* FREE THE PACKET AFTER BEING USED */
+                        	if ((ret = xbee_pktFree(pkt)) != XBEE_ENONE) {
+                                	printf("%s %i\n", xbee_errorToStr(ret), ret);
+                        	}
+			}
+		}
+		else	//a message was received from arduino
+		{
+		               //message was received, process it
+                	/* If the packet length was 27 then it's a valid message */
+                	//if (pkt->dataLen == 27) {
+                        char temp_char;
+                        for (i = 0; i < leng; i++) {
+                                temp_char = pkt->data[18 + i];
+                                message[i] = temp_char; //update message with received data
+                        }
+                        printf("Rx Data:     ");
+                        for (i = 0; i < leng; i++) {
+                                printf("%x ", message[i]);
+                        }
+                        if (message[0] == 'S' || message[0] == 'N')      //received Ship Arrival/Departure notification, create thread to send data to API
+                        {
+				
+			}
+			//else status = 1;                        //received an unknown message, change to panic status
+                        /* FREE THE PACKET AFTER BEING USED */
+                        if ((ret = xbee_pktFree(pkt)) != XBEE_ENONE) {
+                                printf("%s %i\n", xbee_errorToStr(ret), ret);
+                        }
+                }
+	  }
+	  if (status == 1) {			//panic mode
+		//sound pizzo buzzer
+		//blink led
+		
+	  }
+	  if (status == 2) 	//startup mode
+	  {
+		time(&lastHeartbeatTimeStamp);		//reset the time of the last heartbeat
+		time(&messageSentTimeStamp);		//set the time that the last message was sent to Arduino
+		setMessage('H', rawtime);		//set the message to be a heart beat
 		/* send a message */
-		xbee_conTx(con, NULL, message);
+		xbee_conTx(con, NULL, message);		//send the message
 		/* print the sent message */
 		printf("\nTx Message : ");
 		for (i = 0; i < 8;i ++) {
 			printf("%x ", message[i] - '0');
 		}
 		printf("\n");
-		//usleep(2000000);
-		/* block until a message was received */
-		while((ret = xbee_conRx(con, &pkt, NULL)) != XBEE_ENONE);
+		/* block until a message was received or 2 minutes have passed since message was sent*/
+		while(((ret = xbee_conRx(con, &pkt, NULL)) != XBEE_ENONE) || (difftime(messageSentTimeStamp, time(&rawtime))) > 120);
 			//printf("%s %i\n ",xbee_errorToStr(ret),ret);
 
 		printf("\n");
-		
+		if (difftime(messageSentTimeStamp, time(&rawtime)) > 120) {
+			status = 1;	//arduino never replied
+		}
+		else
+		{		//message was received, process it
 		/* If the packet length was 27 then it's a valid message */
 		//if (pkt->dataLen == 27) {
+			char temp_char;
 			for (i = 0; i < leng; i++) {
-				message[i] = pkt->data[18 + i];	//update message with received data
+				temp_char = pkt->data[18 + i];
+				message[i] = temp_char;	//update message with received data
 			}
 			printf("Rx Data:     ");
 			for (i = 0; i < leng; i++) {
 				printf("%x ", message[i]);
 			}
-		//}
-			//usleep(1000000);
-		if ((ret = xbee_pktFree(pkt)) != XBEE_ENONE) {
-			printf("%s %i\n", xbee_errorToStr(ret), ret);
+			if (message[0] == 'A') status = 0;	//received acknowledgment, change to normal status
+			else status = 1; 			//received an unknown message, change to panic status
+			/* FREE THE PACKET AFTER BEING USED */
+			if ((ret = xbee_pktFree(pkt)) != XBEE_ENONE) {
+				printf("%s %i\n", xbee_errorToStr(ret), ret);
+			}
 		}
+	  }//end startup status
+	
 			//usleep(1000000);
 
-		if (p == NULL) break;
+	if (p == NULL) break;
 
-		//usleep(1000000);
+	usleep(1000000);
 	}
 
 	if ((ret = xbee_conEnd(con)) != XBEE_ENONE) {
