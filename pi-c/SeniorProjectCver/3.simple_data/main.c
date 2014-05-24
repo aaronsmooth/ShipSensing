@@ -5,13 +5,23 @@
 #include <time.h>
 #include <xbee.h>
 #include <curl/curl.h>
+#include <ifaddrs.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <net/if.h>
+#include <errno.h>
 //#include <wiringPi.h>
 //#include <wiringSerial.h>
 
 int mmsi[5] = {636015819, 357481000, 236111887, 248225000, 311000102};
 char message[8] = "00000000";
 int leng = 8;
-//char localhost[14] = "128.208.244.70";
+int HBTimeout = 1800;
+int replyTimeout = 120;
+int result;
+//char localhost[] = "192.168.0.101";
 
 void setMessage(char firstChar, time_t rawtime) {
 	struct tm * timeinfo;
@@ -19,13 +29,19 @@ void setMessage(char firstChar, time_t rawtime) {
         timeinfo = localtime (&rawtime);
 
         message[0] = firstChar + '0';
-        message[1] = timeinfo->tm_sec + '0'; //0 seconds
-        message[2] = timeinfo->tm_min + '0'; //31 minutes
-        message[3] = timeinfo->tm_hour + '0'; //20th hour or 8pm
-        message[4] = timeinfo->tm_wday + '0'; //
-        message[5] = timeinfo->tm_mday + '0';
-        message[6] = (timeinfo->tm_mon + 1) + '0';//months since  Jan
-        message[7] = (timeinfo->tm_year - 100) + '0';//years since 1900
+        message[1] = '0' + convertToHex(timeinfo->tm_sec); //0 seconds
+        message[2] = '0' + convertToHex(timeinfo->tm_min); //31 minutes
+        message[3] = '0' + convertToHex(timeinfo->tm_hour); //20th hour or 8pm
+        message[4] = '0' + convertToHex(timeinfo->tm_wday); //
+        message[5] = '0' + convertToHex(timeinfo->tm_mday);
+        message[6] = '0' + convertToHex(timeinfo->tm_mon + 1);//months since  Jan
+        message[7] = '0' + (timeinfo->tm_year - 100);//years since 1900
+}
+
+int convertToHex(int value) {
+	result = (value / 10) << 4;
+	result += value % 10;
+	return result;
 }
 /*
 time_t* fillAPIData(void) {
@@ -63,6 +79,54 @@ int main(void) {
 	char apiData[50];
 	int mmsiPtr;
 	mmsiPtr = 0;
+	struct ifaddrs *myaddrs, *ifa;
+	void *in_addr;
+	char buf[64];	//the buffer holding the ip address
+	char curlStr[64];
+
+	if(getifaddrs(&myaddrs) != 0)
+    	{
+       		perror("getifaddrs");
+        	exit(1);
+    	}
+
+    	for (ifa = myaddrs; ifa != NULL; ifa = ifa->ifa_next)
+    	{
+        	if (ifa->ifa_addr == NULL)
+            		continue;
+        	if (!(ifa->ifa_flags & IFF_UP))
+            		continue;
+
+        	switch (ifa->ifa_addr->sa_family)
+        	{
+            		case AF_INET:
+            		{
+                		struct sockaddr_in *s4 = (struct sockaddr_in *)ifa->ifa_addr;
+                		in_addr = &s4->sin_addr;
+                		break;
+            		}
+
+            		case AF_INET6:
+            		{
+               			struct sockaddr_in6 *s6 = (struct sockaddr_in6 *)ifa->ifa_addr;
+                		in_addr = &s6->sin6_addr;
+                		break;
+            		}
+
+            		default:
+                		continue;
+        	}
+
+        	if (!inet_ntop(ifa->ifa_addr->sa_family, in_addr, buf, sizeof(buf)))
+        	{
+            		printf("%s: inet_ntop failed!\n", ifa->ifa_name);
+        	}
+        	else
+        	{
+            		printf("%s: %s\n", ifa->ifa_name, buf);
+        	}
+    	}
+	strcpy(curlStr, buf);//put IP address into curlStr array
 
 	if ((ret = xbee_setup(&xbee, "xbeeZB", "/dev/ttyUSB0", 9600)) != XBEE_ENONE) {
 		printf("ret: %d (%s)\n", ret, xbee_errorToStr(ret));
@@ -91,33 +155,37 @@ int main(void) {
 
 	int i;
 	double temp;
+	char temp_char;
 	time(&lastHeartbeatTimeStamp);		//set initial timestamp 
 	
 	for (;;) {
 	  void *p;
 	  printf("\nCurrent Status = %i ", status);
 	  if (status == 0) {			//normal mode
-		printf("\nStarting Status 0");
 		printf("\n");
+		//time(&lastHeartbeatTimeStamp);
 		/* block until a message was received or 30 minutes have passed since a message was received */
-		while(((ret = xbee_conRxWait(con, &pkt, NULL)) != XBEE_ENONE)); //&& !(difftime(time(&rawtime), lastHeartbeatTimeStamp) > 1800));
+		while(((ret = xbee_conRx(con, &pkt, NULL)) != XBEE_ENONE) && !(difftime(time(&rawtime), lastHeartbeatTimeStamp) > HBTimeout))
+		{
+//			printf("\nwaiting");
+		}
+		printf("\nReceived");
 		/* check if 30 minutes passed that broke the block */
-		if (difftime(time(&rawtime), lastHeartbeatTimeStamp) > 1800)
+		if (difftime(time(&rawtime), lastHeartbeatTimeStamp) > HBTimeout)
 		{
 			time(&lastHeartbeatTimeStamp);
 			time(&messageSentTimeStamp);
 			setMessage('H', rawtime);
 			xbee_conTx(con, NULL, message);
-			while(((ret = xbee_conRxWait(con, &pkt, NULL)) != XBEE_ENONE) && !(difftime(time(&rawtime), messageSentTimeStamp) > 120));
+			while(((ret = xbee_conRx(con, &pkt, NULL)) != XBEE_ENONE) && !(difftime(time(&rawtime), messageSentTimeStamp) > replyTimeout));
 			if (difftime(messageSentTimeStamp, time(&rawtime)) > 120) status = 1;
 			else
 			{       //message was received, process it
                 		/* If the packet length was 27 then it's a valid message */
                 		//if (pkt->dataLen == 27) {
-                        	char temp_char;
-                        	for (i = 0; i < pkt->dataLen; i++) {
-                                	temp_char = pkt->data[i];
-                                	//message[i] = temp_char; //update message with received data
+                        	for (i = 0; i < leng; i++) {
+                                	temp_char = pkt->data[18 + i];
+                                	message[i] = temp_char; //update message with received data
                         	}
                         	printf("Rx Data:     ");
                         	for (i = 0; i < leng; i++) {
@@ -126,38 +194,48 @@ int main(void) {
                         	if (message[0] == 'A') status = 0;      //received acknowledgment, change to normal status
                         	else status = 1;                        //received an unknown message, change to panic status
                         	/* FREE THE PACKET AFTER BEING USED */
-                        	if ((ret = xbee_pktFree(pkt)) != XBEE_ENONE) {
-                                	printf("%s %i\n", xbee_errorToStr(ret), ret);
-                        	}
+                        //	if ((ret = xbee_pktFree(pkt)) != XBEE_ENONE) {
+                          //      	printf("%s %i\n", xbee_errorToStr(ret), ret);
+                        //	}
 			}
 		}
 		else	//a message was received from arduino
 		{
+			printf("\nPkt length = %i", pkt->dataLen);
+			printf("\nElse Statement");
 		               //message was received, process it
                 	/* If the packet length was 27 then it's a valid message */
                 	//if (pkt->dataLen == 27) {
-                        char temp_char;
+			char temp_char;
                         for (i = 0; i < leng; i++) {
+				//printf(" %i ", pkt->data[i]);
+				//printf(" Message at %i : %i ", i, message[i]);
                                 temp_char = pkt->data[18 + i];
                                 message[i] = temp_char; //update message with received data
                         }
-                        printf("Rx Data:     ");
+                        printf("\nRx Data:     ");
                         for (i = 0; i < leng; i++) {
                                 printf("%i ", message[i]);
                         }
-                        if (message[0] == 'S' || message[0] == 'N')      //received Ship Arrival/Departure notification, create thread to send data to API
+			printf("\n");
+                        if (message[0] == 83 || message[0] == 78)      //received Ship Arrival/Departure notification, create thread to send data to API
                         {
+				printf("\nif");
 				/* In windows, this will init the winsock stuff */ 
   				curl_global_init(CURL_GLOBAL_ALL);
-
+				printf("\ninit success");
+				printf("\n");
 				/* get a curl handle */ 
   				curl = curl_easy_init();
+				printf("\ncurl got assigned");
+				printf("\n");
   				if(curl) 
 				{
     					/* First set the URL that is about to receive our POST. This URL can
        					just as well be a https:// URL if that is what should receive the
-       					data. */ 
-    					curl_easy_setopt(curl, CURLOPT_URL, "128.208.244.70:8000/activity");
+       					data. */
+					strcat (curlStr, ":8000/activity"); 
+    					curl_easy_setopt(curl, CURLOPT_URL, curlStr);
     					/* Now specify the POST data */
 					//strcat(apiData, fillAPIData()); 
 					if (mmsiPtr ==0) {
@@ -195,12 +273,12 @@ int main(void) {
   				}
   				curl_global_cleanup();
 			}
+		}
 			//else status = 1;                        //received an unknown message, change to panic status
-                        /* FREE THE PACKET AFTER BEING USED */
-                        if ((ret = xbee_pktFree(pkt)) != XBEE_ENONE) {
-                                printf("%s %i\n", xbee_errorToStr(ret), ret);
-                        }
-                }
+                /* FREE THE PACKET AFTER BEING USED */
+                if ((ret = xbee_pktFree(pkt)) != XBEE_ENONE) {
+                        printf("%s %i\n", xbee_errorToStr(ret), ret);
+                } 
 	  }
 	  if (status == 1) {			//panic mode
 		//sound pizzo buzzer
@@ -220,23 +298,23 @@ int main(void) {
 			printf("%i ", message[i] - '0');
 		}
 		//printf("\n");
-		printf("\nStuck1");
+		//printf("\nStuck1");
 		/* block until a message was received or 2 minutes have passed since message was sent*/
-		while(((ret = xbee_conRxWait(con, &pkt, NULL)) != XBEE_ENONE) && !(difftime(time(&rawtime), messageSentTimeStamp) > 2))
+		while(((ret = xbee_conRx(con, &pkt, NULL)) != XBEE_ENONE) && !(difftime(time(&rawtime), messageSentTimeStamp) > replyTimeout))
 		{
-			printf("\nstuck2");
+			//printf("\nstuck2");
 		}
 			//printf("%s %i\n ",xbee_errorToStr(ret),ret);
-		printf("\nStuck 3");
+		//printf("\nStuck 3");
 		printf("\n");
-		if (difftime(time(&rawtime), messageSentTimeStamp) > 2) {
+		if (difftime(time(&rawtime), messageSentTimeStamp) > replyTimeout) {
 			status = 1;	//arduino never replied
 		}
 		else
 		{		//message was received, process it
 		/* If the packet length was 27 then it's a valid message */
 		//if (pkt->dataLen == 27) {
-			char temp_char;
+			//char temp_char;
 			for (i = 0; i < leng; i++) {
 				temp_char = pkt->data[18 + i];
 				message[i] = temp_char;	//update message with received data
@@ -253,12 +331,9 @@ int main(void) {
 			}
 		}
 	  }//end startup status
-	
-			//usleep(1000000);
 
 	if (p == NULL) break;
 
-	//usleep(1000000);
 	}
 
 	if ((ret = xbee_conEnd(con)) != XBEE_ENONE) {
