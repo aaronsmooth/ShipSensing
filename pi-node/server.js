@@ -27,12 +27,16 @@ app.configure(function() {
     app.use(express.methodOverride());
 });
 
-app.get("/save/:mmsi/:utime", function(req, res) {
+app.get("/save/:mmsi/:utime/:st", function(req, res) {
     var mmsi = req.params.mmsi,
-        utime = req.params.utime;
+        utime = req.params.utime,
+        st = req.params.st,
+        status = st == "s" ? "Arrived" : "Departed";
 
     console.log("mmsi:" + mmsi)
     console.log("utime:" + utime)
+    console.log("status:" + status)
+
     var Activity = Parse.Object.extend("Activity"),
         activity = new Activity(),
         image, fileData, dockedAt = new Date(utime * 1000);
@@ -42,28 +46,30 @@ app.get("/save/:mmsi/:utime", function(req, res) {
         console.log("saving activity to parse");
         activity.set("vesselMmsi", mmsi);
         activity.set("dockedAt", dockedAt);
+        activity.set("status", status);
         activity.set("image", file);
         activity.save();
         return res.send(activity);
     });
 });
 
-app.get("/add/:mmsi/:utime", function(req, res) {
+app.get("/add/:mmsi/:utime/:st", function(req, res) {
     console.log("add activity requested");
     var mmsi = req.params.mmsi,
-        utime = req.params.utime;
-    if (!mmsi || !utime) {
+        utime = req.params.utime,
+        st = req.params.st;
+    if (!mmsi || !utime || !st) {
         return res.send(400, "invalid inputs");
     }
     camera.start();
     camera.on("read", function(err, timestamp, filename) {
         camera.stop();
         console.log("photo image captured with filename: " + filename);
-        return res.redirect('save/' + mmsi + "/" + utime);
+        return res.redirect('save/' + mmsi + "/" + utime + "/" + st);
     });
 });
 
-function recordActivity(mmsi, utime, callback) {
+function recordActivity(mmsi, utime, status, callback) {
     var Activity = Parse.Object.extend("Activity"),
         activity = new Activity(),
         image, fileData, dockedAt = new Date(utime * 1000);
@@ -73,6 +79,7 @@ function recordActivity(mmsi, utime, callback) {
         console.log("saving activity to parse");
         activity.set("vesselMmsi", mmsi);
         activity.set("dockedAt", dockedAt);
+        activity.set("status", status);
         activity.set("image", file);
         activity.save();
         callback(activity);
@@ -80,20 +87,23 @@ function recordActivity(mmsi, utime, callback) {
 }
 
 app.post("/activity", function(req, res) {
-    console.log("post activity requested");
     var mmsi = req.body.mmsi,
-        utime = req.body.utime;
+        utime = req.body.utime,
+        st = req.body.st,
+        status = st == "s" ? "Arrived" : "Departed";
 
     console.log("mmsi:" + mmsi)
     console.log("utime:" + utime)
-    if (!mmsi || !utime) {
+    console.log("status:" + status)
+
+    if (!mmsi || !utime || !st) {
         return res.send(400, "invalid inputs");
     }
     camera.start();
     camera.on("read", function(err, timestamp, filename) {
         camera.stop();
         console.log("photo image captured with filename: " + filename);
-        recordActivity(mmsi, utime, function(activity) {
+        recordActivity(mmsi, utime, status, function(activity) {
             return res.send(activity);
         });
     });
