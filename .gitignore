@@ -49,3 +49,7 @@ npm-debug.log
 
 photo
 photo/*
+
+#python
+flask
+flask/*

@@ -81,3 +81,12 @@ $ npm install
 // Wait for all dependencies to be installed and then run the server
 $ node server.js
 ```
+
+###Pi-Py Setup
+```
+// Go to "pi-py" directory of the project
+$ bash setup.sh
+
+// Wait for setup to complete
+$ ./mmsi_server.py
+```
