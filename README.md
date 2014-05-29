@@ -88,5 +88,5 @@ $ node server.js
 $ bash setup.sh
 
 // Wait for setup to complete
-$ ./mmsi_server.py
+$ ./server.py
 ```
