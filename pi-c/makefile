@@ -11,4 +11,4 @@ clean:
 	-rm $(PROG)
 
 $(PROG): $(PROG).c /home/pi/libraries/libxbee.libxbee-v3/lib/libxbee.so
-	gcc $(filter %.c,$^) -g -o $@ -I ../../.. -L /home/pi/libraries/libxbee.libxbee-v3/lib -lxbee -lpthread -lrt 
+	gcc $(filter %.c,$^) -g -o $@ -I ../../.. -L /home/pi/libraries/libxbee.libxbee-v3/lib -lxbee -lpthread -lrt -lcurl

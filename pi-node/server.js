@@ -31,7 +31,7 @@ app.get("/save/:mmsi/:utime/:st", function(req, res) {
     var mmsi = req.params.mmsi,
         utime = req.params.utime,
         st = req.params.st,
-        status = st == "s" ? "Arrived" : "Departed";
+        status = st == "S" ? "Arrived" : "Departed";
 
     console.log("mmsi:" + mmsi)
     console.log("utime:" + utime)
@@ -90,7 +90,7 @@ app.post("/activity", function(req, res) {
     var mmsi = req.body.mmsi,
         utime = req.body.utime,
         st = req.body.st,
-        status = st == "s" ? "Arrived" : "Departed";
+        status = st == "S" ? "Arrived" : "Departed";
 
     console.log("mmsi:" + mmsi)
     console.log("utime:" + utime)
