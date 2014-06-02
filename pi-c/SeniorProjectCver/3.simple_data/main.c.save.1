@@ -1,16 +1,16 @@
 
-#include <stdio.h> 
-#include <stdlib.h> 
-#include <string.h> 
-#include <time.h> 
-#include <xbee.h> 
-#include <curl/curl.h> 
-#include <ifaddrs.h> 
-#include <sys/types.h> 
-#include <sys/socket.h> 
-#include <netinet/in.h> 
-#include <arpa/inet.h> 
-#include <net/if.h> 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <xbee.h>
+#include <curl/curl.h>
+#include <ifaddrs.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <net/if.h>
 #include <errno.h>
 //#include <wiringPi.h>
 //#include <wiringSerial.h>
@@ -21,8 +21,6 @@ int leng = 8;
 int HBTimeout = 1800;
 int replyTimeout = 120;
 int result;
-char globalParams[64];
-char *mmsiStr;
 //char localhost[] = "192.168.0.101";
 
 void setMessage(char firstChar, time_t rawtime) {
@@ -44,10 +42,6 @@ int convertToHex(int value) {
 	result = (value / 10) << 4;
 	result += value % 10;
 	return result;
-}
-
-void function_pt(void *ptr, size_t size, size_t nmemb, void *stream) {
-	mmsiStr = ptr;
 }
 
 int convertToTM(void) {
@@ -88,13 +82,9 @@ int main(void) {
 	struct ifaddrs *myaddrs, *ifa;
 	void *in_addr;
 	char buf[64];	//the buffer holding the ip address
-	char curlStr[64], curlParams[64], tempParams[64];
-	strcpy(curlParams, buf);
-	strcpy(tempParams, buf);
-	strcpy(globalParams, buf);
-	strcat(curlParams, "mmsi=248223000&utime=1400114211&st=");
+	char curlStr[64];
+	char curlParams[64];
 
-	
 	if(getifaddrs(&myaddrs) != 0)
     	{
        		perror("getifaddrs");
@@ -138,9 +128,9 @@ int main(void) {
         	}
     	}
 	strcpy(curlStr, buf);//put IP address into curlStr array
-	strcat (curlStr, ":8000/activity");
-	//printf("\n");
-	//printf(curlStr);
+	strcat (curlStr, ":8000/activity?");
+	printf("\n");
+	printf(curlStr);
 	if ((ret = xbee_setup(&xbee, "xbeeZB", "/dev/ttyUSB0", 9600)) != XBEE_ENONE) {
 		printf("ret: %d (%s)\n", ret, xbee_errorToStr(ret));
 		return ret;
@@ -169,7 +159,7 @@ int main(void) {
 	int i;
 	double temp;
 	char temp_char;
-	char * temp_array;
+	char[] temp_array;
 	time(&lastHeartbeatTimeStamp);		//set initial timestamp 
 	
 	for (;;) {
@@ -251,19 +241,38 @@ int main(void) {
 					//strcat (curlStr, ":8000/activity"); 
     					curl_easy_setopt(curl, CURLOPT_URL, curlStr);
     					/* Now specify the POST data */
-					//temp_array = message[0];
-					strcpy(tempParams, curlParams);
-					strcat(tempParams, "S");
-					strcpy(globalParams, tempParams);
-					//curlParams = globalParams;
+					curlParams = "mmsi=248223000&utime=1400114211&st=";
+					temp_array = message[
+					strcat(curlParams, message[0]);
 					//strcat(apiData, fillAPIData()); 
-    					curl_easy_setopt(curl, CURLOPT_POSTFIELDS, globalParams);
-					printf("\n%s\n", globalParams);
+					if (mmsiPtr ==0) {
+    						curl_easy_setopt(curl, CURLOPT_POSTFIELDS, curlParams);
+						mmsiPtr++;
+						mmsiPtr = mmsiPtr % 5;
+					} else if (mmsiPtr == 1) {
+						curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "mmsi=357481000&utime=1400114311&st=N");// + message[0]);
+                                                mmsiPtr++;
+                                                mmsiPtr = mmsiPtr % 5;
+					} else if (mmsiPtr == 2) {
+						curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "mmsi=236111887&utime=1400114411&st=" + message[0]);
+                                                mmsiPtr++;
+                                                mmsiPtr = mmsiPtr % 5;
+					} else if (mmsiPtr == 3) {
+						curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "mmsi=248225000&utime=1400114511&st=" + message[0]);
+                                                mmsiPtr++;
+                                                mmsiPtr = mmsiPtr % 5;
+					} else if (mmsiPtr == 4) {
+						curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "mmsi=311000102&utime=1400114611&st=" + message[0]);
+                                                mmsiPtr++;
+                                                mmsiPtr = mmsiPtr % 5;
+					}
+
+
     					/* Perform the request, res will get the return code */ 
     					res = curl_easy_perform(curl);
     					/* Check for errors */ 
     					if(res != CURLE_OK)
-      						fprintf(stderr, "curl_easy_perform() failed: %s\n",
+      					fprintf(stderr, "curl_easy_perform() failed: %s\n",
 			                curl_easy_strerror(res));
 
     					/* always cleanup */ 
