@@ -47,7 +47,8 @@ int convertToHex(int value) {
 }
 
 void function_pt(void *ptr, size_t size, size_t nmemb, void *stream) {
-	mmsiStr = ptr;
+	//mmsiStr = ptr;
+	printf("%d", atoi(ptr));
 }
 
 int convertToTM(void) {
@@ -81,6 +82,7 @@ int main(void) {
 	double heartbeatTimeElapsed;
 	double messageTimeElapsed;
 	CURL *curl;
+	CURL *curl2;
   	CURLcode res;
 	char apiData[50];
 	int mmsiPtr;
@@ -88,7 +90,7 @@ int main(void) {
 	struct ifaddrs *myaddrs, *ifa;
 	void *in_addr;
 	char buf[64];	//the buffer holding the ip address
-	char curlStr[64], curlParams[64], tempParams[64];
+	char curlStr[64], curlParams[64], tempParams[64], curlMMSI[64];
 	strcpy(curlParams, buf);
 	strcpy(tempParams, buf);
 	strcpy(globalParams, buf);
@@ -241,9 +243,19 @@ int main(void) {
 				//printf("\n");
 				/* get a curl handle */ 
   				curl = curl_easy_init();
+				curl2 = curl_easy_init();
+
+				if(curl)
+				{
+
+					curl_easy_setopt(curl, CURLOPT_URL, curlMMSI);
+					curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, function_pt);
+					curl_easy_perform(curl);
+					curl_easy_cleanup(curl);
+				}
 				//printf("\ncurl got assigned");
 				//printf("\n");
-  				if(curl) 
+  				if(curl2) 
 				{
     					/* First set the URL that is about to receive our POST. This URL can
        					just as well be a https:// URL if that is what should receive the
