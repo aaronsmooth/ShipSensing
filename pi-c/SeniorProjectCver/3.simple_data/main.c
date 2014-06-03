@@ -15,7 +15,7 @@
 //#include <wiringPi.h>
 //#include <wiringSerial.h>
 
-int mmsi[5] = {636015819, 357481000, 236111887, 248225000, 311000102};
+int mmsi[18] = {265491000,248264000,311695000,235068882,248265000,636011023,566086000,266211000,257613000,355488000,257565000,249904000,636015819,311000102,248225000,236111887,357481000,248223000};
 char message[8] = "00000000";
 int leng = 8;
 int HBTimeout = 1800;
@@ -83,8 +83,8 @@ int main(void) {
 	double heartbeatTimeElapsed;
 	double messageTimeElapsed;
 	CURL *curl;
-	CURL *curl2;
-  	CURLcode res, res2;
+	//CURL *curl2;
+  	CURLcode res;// res2;
 	char apiData[50];
 	int mmsiPtr;
 	mmsiPtr = 0;
@@ -249,8 +249,8 @@ int main(void) {
 				//printf("\ninit success");
 				//printf("\n");
 				/* get a curl handle */ 
-				curl2 = curl_easy_init();
-
+				//curl2 = curl_easy_init();
+/*
 				if(curl2)
 				{
 					printf("\n%s\n", curlMMSI);
@@ -260,8 +260,9 @@ int main(void) {
 					curl_easy_perform(curl2);
 					curl_easy_cleanup(curl2);
 				}
-				
+*/				
   				curl = curl_easy_init();
+				printf("\n%i\n", convertToTM());
 				//printf("\ncurl got assigned");
 				//printf("\n");
   				if(curl) 
@@ -274,7 +275,7 @@ int main(void) {
     					/* Now specify the POST data */
 					//temp_array = message[0];
 					strcpy(tempParams, curlParams);
-					strcat(tempParams, "S");
+					strcat(tempParams, message[0]);
 					strcpy(globalParams, tempParams);
 					printf("\n%s\n", globalParams);
 					//curlParams = globalParams;
