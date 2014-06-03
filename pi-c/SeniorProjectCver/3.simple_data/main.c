@@ -254,6 +254,7 @@ int main(void) {
 
 				if(curl2)
 				{
+					printf("\n%s\n", curlMMSI);
 
 					curl_easy_setopt(curl2, CURLOPT_URL, curlMMSI);
 					curl_easy_setopt(curl2, CURLOPT_WRITEFUNCTION, function_pt);
