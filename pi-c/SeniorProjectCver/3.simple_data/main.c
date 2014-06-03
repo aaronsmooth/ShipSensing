@@ -117,11 +117,7 @@ int main(void) {
         	}
     	}
 	strcpy(curlStr, buf);//put IP address into curlStr array
-	strcpy(curlMMSI, buf); //put IP address into mmsi curl address
 	strcat (curlStr, ":8000/activity");
-	strcat(curlMMSI, ":5000/mmsi");
-	printf("\n");
-	printf(curlMMSI);
 	
 	if ((ret = xbee_setup(&xbee, "xbeeZB", "/dev/ttyUSB0", 9600)) != XBEE_ENONE) {
 		printf("ret: %d (%s)\n", ret, xbee_errorToStr(ret));
@@ -222,7 +218,8 @@ int main(void) {
 					//strcat(curlParams, "mmsi=248223000&utime=1400114211&st=");
 					
 					strcat(curlParams, "mmsi=");
-					strcat(curlParams, mmsi[rand() % 18]);
+					itoa(mmsi[rand() % 18], curlMMSI, 10);
+					strcat(curlParams, curlMMSI);
 					strcat(curlParams, "&utime=");
 					gettimeofday(tv, null)
 					strcat(curlParams, tv.tv_sec);
