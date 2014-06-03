@@ -46,6 +46,13 @@ int convertToHex(int value) {
 	return result;
 }
 
+int convertToInt(char val) {
+	
+	result = (val >> 4) * 10;
+	result += val & 0x0F;
+	return result;
+}
+
 void function_pt(void *ptr, size_t size, size_t nmemb, void *stream) {
 	//mmsiStr = ptr;
 	printf("\nHI");
@@ -53,15 +60,18 @@ void function_pt(void *ptr, size_t size, size_t nmemb, void *stream) {
 }
 
 int convertToTM(void) {
-	struct tm * rtime;
-	rtime->tm_sec = message[1];
-	rtime->tm_min = message[2];
-	rtime->tm_hour = message[3];
-	rtime->tm_wday = message[4];
-	rtime->tm_mday = message[5];
-	rtime->tm_mon = message[6];
-	rtime->tm_year = message[7];
-	return mktime(rtime);
+	printf("\nHI");
+	struct tm rtime;
+	rtime.tm_sec = convertToInt(message[1]);
+	rtime.tm_min = convertToInt(message[2]);
+	rtime.tm_hour = convertToInt(message[3]);
+	rtime.tm_wday = convertToInt(message[4]);
+	rtime.tm_mday = convertToInt(message[5]);
+	rtime.tm_mon = convertToInt(message[6]);
+	rtime.tm_year = convertToInt(message[7]);
+	printf("\nYear  = %i\n", rtime.tm_year);
+	return mktime(&rtime);
+	//return rtime;
 }
 
 int main(void) {
@@ -92,12 +102,13 @@ int main(void) {
 	void *in_addr;
 	char buf[64];	//the buffer holding the ip address
 	
-	char curlStr[64], curlParams[64], tempParams[64], curlMMSI[64];
+	char curlStr[64], curlParams[64], tempParams[64], curlMMSI[64], alertType[64];
 	strcpy(curlParams, buf);
 	strcpy(tempParams, buf);
 	strcpy(globalParams, buf);
 	strcpy(curlMMSI, buf);
-	printf("\n%s\n", curlStr);
+	strcpy(alertType, buf);
+	//printf("\n%s\n", curlStr);
 	strcat(curlParams, "mmsi=248223000&utime=1400114211&st=");
 	printf("\n%s\n", curlParams);
 
@@ -260,9 +271,9 @@ int main(void) {
 					curl_easy_perform(curl2);
 					curl_easy_cleanup(curl2);
 				}
-*/				
+*/				printf("\nTime %i\n", convertToTM());
   				curl = curl_easy_init();
-				printf("\n%i\n", convertToTM());
+				//printf("\n%i\n", convertToTM());
 				//printf("\ncurl got assigned");
 				//printf("\n");
   				if(curl) 
@@ -275,7 +286,9 @@ int main(void) {
     					/* Now specify the POST data */
 					//temp_array = message[0];
 					strcpy(tempParams, curlParams);
-					strcat(tempParams, message[0]);
+					alertType[0] = message[0];
+					printf("\n%s\n", alertType);
+					strcat(tempParams, alertType);
 					strcpy(globalParams, tempParams);
 					printf("\n%s\n", globalParams);
 					//curlParams = globalParams;
@@ -287,7 +300,7 @@ int main(void) {
     					/* Check for errors */ 
     					if(res != CURLE_OK)
       						fprintf(stderr, "curl_easy_perform() failed: %s\n",
-			                curl_easy_strerror(res2));
+			                curl_easy_strerror(res));
 					printf("\nMadeIT\n");
     					/* always cleanup */ 
     					curl_easy_cleanup(curl);
