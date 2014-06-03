@@ -249,7 +249,6 @@ int main(void) {
 				//printf("\ninit success");
 				//printf("\n");
 				/* get a curl handle */ 
-  				curl = curl_easy_init();
 				curl2 = curl_easy_init();
 
 				if(curl2)
@@ -261,6 +260,8 @@ int main(void) {
 					curl_easy_perform(curl2);
 					curl_easy_cleanup(curl2);
 				}
+				
+  				curl = curl_easy_init();
 				//printf("\ncurl got assigned");
 				//printf("\n");
   				if(curl) 
