@@ -92,9 +92,9 @@ int main(void) {
 	void *in_addr;
 	char buf[64], buf2[64];	//the buffer holding the ip address
 	char curlStr[64], curlParams[64], tempParams[64], curlMMSI[64];
-	strcpy(curlParams, buf);
-	strcpy(tempParams, buf);
-	strcpy(globalParams, buf);
+	strcpy(curlParams, buf2);
+	strcpy(tempParams, buf2);
+	strcpy(globalParams, buf2);
 	strcpy(curlMMSI, buf2);
 	strcat(curlParams, "mmsi=248223000&utime=1400114211&st=");
 
