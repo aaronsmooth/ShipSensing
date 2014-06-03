@@ -12,15 +12,18 @@ var express = require('express'),
     Parse = require('parse').Parse,
     RaspiCam = require('raspicam'),
     camera = new RaspiCam({
-        mode: "photo",
+        mode: "timelapse",
         output: "./photo/img.jpg",
         encoding: "jpg",
-        timeout: 0
+        timelapse: 200,
+        timeout: 86400000
     }),
     port = process.env.PORT || 8000,
     app = express();
 
 Parse.initialize("YwcaugA0e48pvA2Rsmj7yIT9GbOHCPitW3LDPnlq", "KI3qObjuxgfRLTosry7qgmOOFErXEYfuzxgJkiEg");
+
+camera.start();
 
 app.configure(function() {
     app.use(express.bodyParser());
@@ -92,20 +95,11 @@ app.post("/activity", function(req, res) {
         st = req.body.st,
         status = st == "S" ? "Arrived" : "Departed";
 
-    console.log("mmsi:" + mmsi)
-    console.log("utime:" + utime)
-    console.log("status:" + status)
-
     if (!mmsi || !utime || !st) {
         return res.send(400, "invalid inputs");
     }
-    camera.start();
-    camera.on("read", function(err, timestamp, filename) {
-        camera.stop();
-        console.log("photo image captured with filename: " + filename);
-        recordActivity(mmsi, utime, status, function(activity) {
-            return res.send(activity);
-        });
+    recordActivity(mmsi, utime, status, function(activity) {
+        return res.send(activity);
     });
 });
 
