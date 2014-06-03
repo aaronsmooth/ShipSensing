@@ -221,7 +221,7 @@ int main(void) {
 					itoa(mmsi[rand() % 18], curlMMSI, 10);
 					strcat(curlParams, curlMMSI);
 					strcat(curlParams, "&utime=");
-					gettimeofday(tv, null)
+					gettimeofday(tv, NULL);
 					strcat(curlParams, tv.tv_sec);
 					alertType[0] = message[0];
 					strcat(tempParams, alertType);
