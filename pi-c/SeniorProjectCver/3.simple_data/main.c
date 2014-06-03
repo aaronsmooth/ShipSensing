@@ -97,6 +97,7 @@ int main(void) {
 	strcpy(globalParams, buf);
 	strcpy(curlMMSI, buf);
 	strcat(curlParams, "mmsi=248223000&utime=1400114211&st=");
+	printf("\n%s\n", curlParams);
 
 	
 	if(getifaddrs(&myaddrs) != 0)
@@ -271,11 +272,11 @@ int main(void) {
 					strcpy(tempParams, curlParams);
 					strcat(tempParams, "S");
 					strcpy(globalParams, tempParams);
-					printf("\n%s\n", tempParams);
+					//printf("\n%s\n", tempParams);
 					//curlParams = globalParams;
 					//strcat(apiData, fillAPIData()); 
     					curl_easy_setopt(curl, CURLOPT_POSTFIELDS, globalParams);
-					printf("\n%s\n", globalParams);
+						//printf("\n%s\n", globalParams);
     					/* Perform the request, res will get the return code */ 
     					res = curl_easy_perform(curl);
     					/* Check for errors */ 
