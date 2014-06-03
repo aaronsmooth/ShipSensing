@@ -91,11 +91,13 @@ int main(void) {
 	struct ifaddrs *myaddrs, *ifa;
 	void *in_addr;
 	char buf[64];	//the buffer holding the ip address
+	
 	char curlStr[64], curlParams[64], tempParams[64], curlMMSI[64];
 	strcpy(curlParams, buf);
 	strcpy(tempParams, buf);
 	strcpy(globalParams, buf);
 	strcpy(curlMMSI, buf);
+	printf("\n%s\n", curlParams);
 	strcat(curlParams, "mmsi=248223000&utime=1400114211&st=");
 	printf("\n%s\n", curlParams);
 
