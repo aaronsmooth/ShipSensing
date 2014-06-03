@@ -1,6 +1,5 @@
 #include <Wire.h>
-#include <XBee.h>			
-//boohooo
+#include <XBee.h>
 #define RTC_Address   0x32  //RTC_Address 
 #define ARRLEN        8     //Array message lengths
 
@@ -160,6 +159,9 @@ void loop()
     }
   }
 }
+// END OF MAIN LOOP
+
+
 /* Populates the message to base array with timing information 
     the message_pointer should already start at index 1 when this method is called */
 void pushDateToMessage(void)
