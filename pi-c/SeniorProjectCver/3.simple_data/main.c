@@ -274,7 +274,7 @@ int main(void) {
 					strcpy(tempParams, curlParams);
 					strcat(tempParams, "S");
 					strcpy(globalParams, tempParams);
-					//printf("\n%s\n", tempParams);
+					printf("\n%s\n", globalParams);
 					//curlParams = globalParams;
 					//strcat(apiData, fillAPIData()); 
     					curl_easy_setopt(curl, CURLOPT_POSTFIELDS, globalParams);
