@@ -1,4 +1,4 @@
-
+//NO RTC IN THIS VERSION
 #include <stdio.h> 
 #include <stdlib.h> 
 #include <string.h> 
