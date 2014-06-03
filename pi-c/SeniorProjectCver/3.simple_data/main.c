@@ -48,7 +48,8 @@ int convertToHex(int value) {
 
 void function_pt(void *ptr, size_t size, size_t nmemb, void *stream) {
 	//mmsiStr = ptr;
-	printf("%d", atoi(ptr));
+	printf("\nHI");
+	printf("\n%d\n", atoi(ptr));
 }
 
 int convertToTM(void) {
@@ -83,17 +84,18 @@ int main(void) {
 	double messageTimeElapsed;
 	CURL *curl;
 	CURL *curl2;
-  	CURLcode res;
+  	CURLcode res, res2;
 	char apiData[50];
 	int mmsiPtr;
 	mmsiPtr = 0;
 	struct ifaddrs *myaddrs, *ifa;
 	void *in_addr;
-	char buf[64];	//the buffer holding the ip address
+	char buf[64], buf2[64];	//the buffer holding the ip address
 	char curlStr[64], curlParams[64], tempParams[64], curlMMSI[64];
 	strcpy(curlParams, buf);
 	strcpy(tempParams, buf);
 	strcpy(globalParams, buf);
+	strcpy(curlMMSI, buf2);
 	strcat(curlParams, "mmsi=248223000&utime=1400114211&st=");
 
 	
@@ -140,9 +142,11 @@ int main(void) {
         	}
     	}
 	strcpy(curlStr, buf);//put IP address into curlStr array
+	strcpy(curlMMSI, buf); //put IP address into mmsi curl address
 	strcat (curlStr, ":8000/activity");
-	//printf("\n");
-	//printf(curlStr);
+	strcat(curlMMSI, ":5000/mmsi");
+	printf("\n");
+	printf(curlMMSI);
 	if ((ret = xbee_setup(&xbee, "xbeeZB", "/dev/ttyUSB0", 9600)) != XBEE_ENONE) {
 		printf("ret: %d (%s)\n", ret, xbee_errorToStr(ret));
 		return ret;
@@ -245,17 +249,17 @@ int main(void) {
   				curl = curl_easy_init();
 				curl2 = curl_easy_init();
 
-				if(curl)
+				if(curl2)
 				{
 
-					curl_easy_setopt(curl, CURLOPT_URL, curlMMSI);
-					curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, function_pt);
-					curl_easy_perform(curl);
-					curl_easy_cleanup(curl);
+					curl_easy_setopt(curl2, CURLOPT_URL, curlMMSI);
+					curl_easy_setopt(curl2, CURLOPT_WRITEFUNCTION, function_pt);
+					curl_easy_perform(curl2);
+					curl_easy_cleanup(curl2);
 				}
 				//printf("\ncurl got assigned");
 				//printf("\n");
-  				if(curl2) 
+  				if(curl) 
 				{
     					/* First set the URL that is about to receive our POST. This URL can
        					just as well be a https:// URL if that is what should receive the
@@ -267,6 +271,7 @@ int main(void) {
 					strcpy(tempParams, curlParams);
 					strcat(tempParams, "S");
 					strcpy(globalParams, tempParams);
+					printf("\n%s\n", tempParams);
 					//curlParams = globalParams;
 					//strcat(apiData, fillAPIData()); 
     					curl_easy_setopt(curl, CURLOPT_POSTFIELDS, globalParams);
@@ -276,8 +281,8 @@ int main(void) {
     					/* Check for errors */ 
     					if(res != CURLE_OK)
       						fprintf(stderr, "curl_easy_perform() failed: %s\n",
-			                curl_easy_strerror(res));
-
+			                curl_easy_strerror(res2));
+					printf("\nMadeIT\n");
     					/* always cleanup */ 
     					curl_easy_cleanup(curl);
   				}
