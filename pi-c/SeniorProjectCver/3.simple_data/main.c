@@ -246,6 +246,7 @@ int main(void) {
 					sprintf(curlMMSI, "%d", tv.tv_sec);
 					strcat(curlParams, curlMMSI);
 					clearString(curlMMSI);
+					strcat(curlParams, "&st=");
 					alertType[0] = message[0];
 					strcat(curlMMSI, alertType);
 					strcat(curlParams, curlMMSI);
@@ -263,7 +264,9 @@ int main(void) {
 					curl_easy_strerror(res));
     				/* always cleanup */ 
 					curl_easy_cleanup(curl);
+					clearString(curlParams);
   				}
+				
   				curl_global_cleanup();
 			}
 		}
