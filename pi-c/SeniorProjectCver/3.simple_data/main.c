@@ -229,7 +229,7 @@ int main(void) {
 					strcat(tempParams, alertType);
 					strcpy(curlMMSI, tempParams);
 					
-					printf("\n%s\n", curlMMSI);
+					printf("\nCurl Params: %s\n", curlParams);
 					
 					curl_easy_setopt(curl, CURLOPT_POSTFIELDS, curlParams);
 					//printf("\n%s\n", globalParams);
