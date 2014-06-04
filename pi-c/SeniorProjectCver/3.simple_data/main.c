@@ -82,7 +82,8 @@ int main(void) {
 	//strcpy(alertType, buf);
 	//printf("\n%s\n", curlStr);
 	clearString(curlParams);
-	
+	clearString(tempParams);
+
 	
 	srand (time(NULL));
 	
