@@ -37,8 +37,7 @@ struct xbee_conAddress address;
 struct xbee_pkt *pkt;
 struct timeval tv;
 xbee_err ret;
-int *datLen;
-datLen = &leng;
+
 status = 2; //0 = normal mode, 1 = panic mode, 2 = startup mode
 double heartbeatTimeElapsed, messageTimeElapsed;
 CURL *curl;
@@ -50,10 +49,11 @@ struct ifaddrs *myaddrs, *ifa;
 void *in_addr;
 char buf[64];	//the buffer holding the ip address
 char curlStr[64], curlParams[64], tempParams[64], curlMMSI[64], alertType[64];
+mmsiStr = curlMMSI;
 /********************************************************/
 //char localhost[] = "192.168.0.101";
 
-void clearString(char string) {
+void clearString(char * string) {
 	strLength = strlen(string);
 	for (int i - 0; i < strLength; i++) {
 		string[i] = '\0';
@@ -70,7 +70,8 @@ void setMessage(char firstChar, time_t rawtime) {
 
 
 int main(void) {
-
+	int *datLen;
+	datLen = &leng;
 	strcpy(curlParams, buf);
 	strcpy(tempParams, buf);
 	strcpy(globalParams, buf);
@@ -223,20 +224,20 @@ int main(void) {
 					//curlParams = globalParams;
 					//strcat(apiData, fillAPIData()); 
 					//strcat(curlParams, "mmsi=248223000&utime=1400114211&st=");
-					clearString(curlMMSI);
+					clearString(mmsiStr);
 					strcat(curlParams, "mmsi=");
 					sprintf(curlMMSI, "%d", mmsi[rand() % 18]);
 					strcat(curlParams, curlMMSI);
 					strcat(curlParams, "&utime=");
-					clearString(curlMMSI);
+					clearString(mmsiStr);
 					gettimeofday(&tv, NULL);
 					sprintf(curlMMSI, "%d", tv.tv_sec);
 					strcat(curlParams, curlMMSI);
-					clearString(curlMMSI);
+					clearString(mmsiStr);
 					alertType[0] = message[0];
 					strcat(curlMMSI, alertType);
 					strcat(curlParams, curlMMSI);
-					clearString(curlMMSI);
+					clearString(mmsiStr);
 					
 					printf("\nCurl Params: %s\n", curlParams);
 					
