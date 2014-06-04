@@ -72,7 +72,7 @@ int main(void) {
 	void *in_addr;
 	char buf[64];	//the buffer holding the ip address
 	char curlStr[64], curlParams[64], tempParams[64], curlMMSI[64], alertType[64];
-	mmsiStr = &curlMMSI;
+	//mmsiStr = &curlMMSI;
 	strcpy(curlParams, buf);
 	strcpy(tempParams, buf);
 	strcpy(globalParams, buf);
