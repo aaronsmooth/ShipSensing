@@ -80,7 +80,7 @@ int main(void) {
 	strcpy(alertType, buf);
 	//printf("\n%s\n", curlStr);
 	
-	printf("\n%s\n", curlParams);
+	printf("\nParams: %s\n", tempParams);
 	srand (time(NULL));
 	
 	if(getifaddrs(&myaddrs) != 0)
