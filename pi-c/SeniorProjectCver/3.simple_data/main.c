@@ -32,7 +32,7 @@ int fd, status, mmsiPtr, i;
 /********************************************************/
 //char localhost[] = "192.168.0.101";
 
-void clearString(char string) {
+void clearString(char * string) {
 	strLength = strlen(string);
 	for (i = 0; i < strLength; i++) {
 		string[i] = '\0';
