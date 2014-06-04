@@ -225,20 +225,20 @@ int main(void) {
 					//curlParams = globalParams;
 					//strcat(apiData, fillAPIData()); 
 					//strcat(curlParams, "mmsi=248223000&utime=1400114211&st=");
-					clearString(mmsiStr);
+					clearString(curlMMSI);
 					strcat(curlParams, "mmsi=");
 					sprintf(curlMMSI, "%d", mmsi[rand() % 18]);
 					strcat(curlParams, curlMMSI);
 					strcat(curlParams, "&utime=");
-					clearString(mmsiStr);
+					clearString(curlMMSI);
 					gettimeofday(&tv, NULL);
 					sprintf(curlMMSI, "%d", tv.tv_sec);
 					strcat(curlParams, curlMMSI);
-					clearString(mmsiStr);
+					clearString(curlMMSI);
 					alertType[0] = message[0];
 					strcat(curlMMSI, alertType);
 					strcat(curlParams, curlMMSI);
-					clearString(mmsiStr);
+					clearString(curlMMSI);
 					
 					printf("\nCurl Params: %s\n", curlParams);
 					
