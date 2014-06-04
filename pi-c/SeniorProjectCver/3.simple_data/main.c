@@ -16,16 +16,49 @@
 //#include <wiringPi.h>
 //#include <wiringSerial.h>
 
+/**************VARIABLE DECLARATIONS*****************/
 int mmsi[18] = {265491000,248264000,311695000,235068882,248265000,636011023,566086000,266211000,257613000,355488000,257565000,249904000,636015819,311000102,248225000,236111887,357481000,248223000};
 char message[8] = "00000000";
 int leng = 8;
 int HBTimeout = 1800;
 int replyTimeout = 120;
-int result;
+int result, strLength;
 char globalParams[64];
 char *mmsiStr;
+char temp_char;
+char * temp_array;
+int fd, status, mmsiPtr, i;
+time_t rawtime, lastHeartbeatTimeStamp, messageSentTimeStamp;
+double seconds, temp;
+void *d;
+struct xbee *xbee;
+struct xbee_con *con;
+struct xbee_conAddress address;
+struct xbee_pkt *pkt;
+struct timeval tv;
+xbee_err ret;
+int *datLen;
+datLen = &leng;
+status = 2; //0 = normal mode, 1 = panic mode, 2 = startup mode
+double heartbeatTimeElapsed, messageTimeElapsed;
+CURL *curl;
+//CURL *curl2;
+CURLcode res;// res2;
+char apiData[50];
+mmsiPtr = 0;
+struct ifaddrs *myaddrs, *ifa;
+void *in_addr;
+char buf[64];	//the buffer holding the ip address
+char curlStr[64], curlParams[64], tempParams[64], curlMMSI[64], alertType[64];
+/********************************************************/
 //char localhost[] = "192.168.0.101";
 
+void clearString(char string) {
+	strLength = strlen(string);
+	for (int i - 0; i < strLength; i++) {
+		string[i] = '\0';
+	}
+}
 void setMessage(char firstChar, time_t rawtime) {
 	struct tm * timeinfo;
 	time(&rawtime);
@@ -37,33 +70,7 @@ void setMessage(char firstChar, time_t rawtime) {
 
 
 int main(void) {
-/**************VARIABLE DECLARATIONS*****************/
-	char temp_char;
-	char * temp_array;
-	int fd, status, mmsiPtr, i;
-    time_t rawtime, lastHeartbeatTimeStamp, messageSentTimeStamp;
-	double seconds, temp;
-	void *d;
-	struct xbee *xbee;
-	struct xbee_con *con;
-	struct xbee_conAddress address;
-	struct xbee_pkt *pkt;
-	struct timeval tv;
-	xbee_err ret;
-	int *datLen;
-	datLen = &leng;
-	status = 2; //0 = normal mode, 1 = panic mode, 2 = startup mode
-	double heartbeatTimeElapsed, messageTimeElapsed;
-	CURL *curl;
-	//CURL *curl2;
-  	CURLcode res;// res2;
-	char apiData[50];
-	mmsiPtr = 0;
-	struct ifaddrs *myaddrs, *ifa;
-	void *in_addr;
-	char buf[64];	//the buffer holding the ip address
-	char curlStr[64], curlParams[64], tempParams[64], curlMMSI[64], alertType[64];
-/********************************************************/
+
 	strcpy(curlParams, buf);
 	strcpy(tempParams, buf);
 	strcpy(globalParams, buf);
@@ -216,18 +223,20 @@ int main(void) {
 					//curlParams = globalParams;
 					//strcat(apiData, fillAPIData()); 
 					//strcat(curlParams, "mmsi=248223000&utime=1400114211&st=");
-					
+					clearString(curlMMSI);
 					strcat(curlParams, "mmsi=");
 					sprintf(curlMMSI, "%d", mmsi[rand() % 18]);
 					strcat(curlParams, curlMMSI);
 					strcat(curlParams, "&utime=");
+					clearString(curlMMSI);
 					gettimeofday(&tv, NULL);
 					sprintf(curlMMSI, "%d", tv.tv_sec);
 					strcat(curlParams, curlMMSI);
-					strcpy(curlMMSI, tempParams);
+					clearString(curlMMSI);
 					alertType[0] = message[0];
-					strcat(tempParams, alertType);
-					strcpy(curlMMSI, tempParams);
+					strcat(curlMMSI, alertType);
+					strcat(curlParams, curlMMSI);
+					clearString(curlMMSI);
 					
 					printf("\nCurl Params: %s\n", curlParams);
 					
