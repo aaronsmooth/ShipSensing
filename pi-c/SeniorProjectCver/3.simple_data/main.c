@@ -83,6 +83,9 @@ int main(void) {
 	//printf("\n%s\n", curlStr);
 	clearString(curlParams);
 	clearString(tempParams);
+	clearString(curlStr);
+	clearString(curlMMSI);
+	clearString(alertType);
 
 	
 	srand (time(NULL));
