@@ -28,28 +28,7 @@ char *mmsiStr;
 char temp_char;
 char * temp_array;
 int fd, status, mmsiPtr, i;
-time_t rawtime, lastHeartbeatTimeStamp, messageSentTimeStamp;
-double seconds, temp;
-void *d;
-struct xbee *xbee;
-struct xbee_con *con;
-struct xbee_conAddress address;
-struct xbee_pkt *pkt;
-struct timeval tv;
-xbee_err ret;
 
-status = 2; //0 = normal mode, 1 = panic mode, 2 = startup mode
-double heartbeatTimeElapsed, messageTimeElapsed;
-CURL *curl;
-//CURL *curl2;
-CURLcode res;// res2;
-char apiData[50];
-mmsiPtr = 0;
-struct ifaddrs *myaddrs, *ifa;
-void *in_addr;
-char buf[64];	//the buffer holding the ip address
-char curlStr[64], curlParams[64], tempParams[64], curlMMSI[64], alertType[64];
-mmsiStr = curlMMSI;
 /********************************************************/
 //char localhost[] = "192.168.0.101";
 
@@ -72,6 +51,28 @@ void setMessage(char firstChar, time_t rawtime) {
 int main(void) {
 	int *datLen;
 	datLen = &leng;
+	time_t rawtime, lastHeartbeatTimeStamp, messageSentTimeStamp;
+	double seconds, temp;
+	void *d;
+	struct xbee *xbee;
+	struct xbee_con *con;
+	struct xbee_conAddress address;
+	struct xbee_pkt *pkt;
+	struct timeval tv;
+	xbee_err ret;
+
+	status = 2; //0 = normal mode, 1 = panic mode, 2 = startup mode
+	double heartbeatTimeElapsed, messageTimeElapsed;
+	CURL *curl;
+	//CURL *curl2;
+	CURLcode res;// res2;
+	char apiData[50];
+	mmsiPtr = 0;
+	struct ifaddrs *myaddrs, *ifa;
+	void *in_addr;
+	char buf[64];	//the buffer holding the ip address
+	char curlStr[64], curlParams[64], tempParams[64], curlMMSI[64], alertType[64];
+	mmsiStr = &curlMMSI;
 	strcpy(curlParams, buf);
 	strcpy(tempParams, buf);
 	strcpy(globalParams, buf);
