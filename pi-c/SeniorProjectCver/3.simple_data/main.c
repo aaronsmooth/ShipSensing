@@ -80,7 +80,7 @@ int main(void) {
 	strcpy(alertType, buf);
 	//printf("\n%s\n", curlStr);
 	
-	printf("\nParams: %s\n", tempParams);
+	
 	srand (time(NULL));
 	
 	if(getifaddrs(&myaddrs) != 0)
@@ -158,6 +158,9 @@ int main(void) {
 	
 	for (;;) {
 	  void *p;
+	  
+	  printf("\nParams: %s\n", tempParams);
+	  
 	  printf("\nCurrent Status = %i ", status);
 	  if (status == 0) {			//normal mode
 		printf("\n");
