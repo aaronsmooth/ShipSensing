@@ -81,6 +81,7 @@ int main(void) {
 	//strcpy(curlMMSI, buf);
 	//strcpy(alertType, buf);
 	//printf("\n%s\n", curlStr);
+	clearString(curlParams);
 	
 	
 	srand (time(NULL));
@@ -128,7 +129,7 @@ int main(void) {
         	}
     	}
 	strcpy(curlStr, buf);//put IP address into curlStr array
-	strcat (curlStr, ":8000/activity");
+	strcat(curlStr, ":8000/activity");
 	
 	if ((ret = xbee_setup(&xbee, "xbeeZB", "/dev/ttyUSB0", 9600)) != XBEE_ENONE) {
 		printf("ret: %d (%s)\n", ret, xbee_errorToStr(ret));
