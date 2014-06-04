@@ -35,7 +35,7 @@ int fd, status, mmsiPtr, i;
 void clearString(char * string) {
 	strLength = strlen(string);
 	for (i = 0; i < strLength; i++) {
-		string[i] = '\0';
+		&string[i] = '\0';
 	}
 }
 void setMessage(char firstChar, time_t rawtime) {
