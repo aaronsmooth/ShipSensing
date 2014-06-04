@@ -24,7 +24,7 @@ int HBTimeout = 1800;
 int replyTimeout = 120;
 int result, strLength;
 char globalParams[64];
-char * mmsiStr[];
+char * mmsiStr;
 char temp_char;
 char * temp_array;
 int fd, status, mmsiPtr, i;
