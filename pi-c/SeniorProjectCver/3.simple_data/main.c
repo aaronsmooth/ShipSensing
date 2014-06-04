@@ -208,28 +208,28 @@ int main(void) {
 					curl_easy_setopt(curl, CURLOPT_URL, curlStr);
     				/* Now specify the POST data */
 					//temp_array = message[0];
-					strcpy(tempParams, curlParams);
+					//strcpy(tempParams, curlParams);
 					
 					
-					strcpy(globalParams, tempParams);
-					printf("\n%s\n", globalParams);
+					//strcpy(globalParams, tempParams);
+					//printf("\n%s\n", globalParams);
 					//curlParams = globalParams;
 					//strcat(apiData, fillAPIData()); 
 					//strcat(curlParams, "mmsi=248223000&utime=1400114211&st=");
 					
 					strcat(curlParams, "mmsi=");
 					sprintf(curlMMSI, "%d", mmsi[rand() % 18]);
-					//itoa(mmsi[rand() % 18], curlMMSI, 10);
 					strcat(curlParams, curlMMSI);
 					strcat(curlParams, "&utime=");
 					gettimeofday(&tv, NULL);
 					sprintf(curlMMSI, "%d", tv.tv_sec);
-					//itoa(tv.tv_sec, curlMMSI, 10);
 					strcat(curlParams, curlMMSI);
+					strcpy(curlMMSI, tempParams);
 					alertType[0] = message[0];
 					strcat(tempParams, alertType);
+					strcpy(curlMMSI, tempParams);
 					
-					printf("\n%s\n", alertType);
+					printf("\n%s\n", curlMMSI);
 					
 					curl_easy_setopt(curl, CURLOPT_POSTFIELDS, curlParams);
 					//printf("\n%s\n", globalParams);
@@ -239,7 +239,6 @@ int main(void) {
 					if(res != CURLE_OK)
 						fprintf(stderr, "curl_easy_perform() failed: %s\n",
 					curl_easy_strerror(res));
-					printf("\nMadeIT\n");
     				/* always cleanup */ 
 					curl_easy_cleanup(curl);
   				}
