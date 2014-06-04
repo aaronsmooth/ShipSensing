@@ -34,7 +34,7 @@ int fd, status, mmsiPtr, i;
 
 void clearString(char * string) {
 	strLength = strlen(string);
-	for (int i = 0; i < strLength; i++) {
+	for (i = 0; i < strLength; i++) {
 		string[i] = '\0';
 	}
 }
