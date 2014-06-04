@@ -236,6 +236,7 @@ int main(void) {
 					strcat(curlParams, curlMMSI);
 					strcat(curlParams, "&utime=");
 					clearString(curlMMSI);
+					printf("\nAfter Clear Returned: %s\n", curlMMSI);
 					gettimeofday(&tv, NULL);
 					sprintf(curlMMSI, "%d", tv.tv_sec);
 					strcat(curlParams, curlMMSI);
