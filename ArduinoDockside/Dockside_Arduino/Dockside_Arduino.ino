@@ -1,5 +1,6 @@
 #include <Wire.h>
 #include <XBee.h>
+#include <Time.h>
 #define RTC_Address   0x32  //RTC_Address 
 #define ARRLEN        8     //Array message lengths
 
@@ -17,6 +18,8 @@ int incomingByte = 0;
 boolean lc = true;
 int state_change = 0;  //0 = no state change, 1 means that a ship recently left/arrived
 int msgCount = 0;
+int range = 150;
+//time_t t = now();
 
 
 // Create arrays for holding data for sending/receiving.
@@ -53,29 +56,25 @@ void loop()
 	  delay(1000); //give time for xbee to receive all of the message
       incomingByte = Serial2.read() - 48;
       if (incomingByte == 72 || incomingByte == 65) {
-	    msgCount = 1;
-		while (msgCount < 8) {
-		
-		
-		
-			Serial.println("\nData read from Rx:");
-			receivedMessage[0] = incomingByte;
-			Serial.print(receivedMessage[0]);
-			Serial.print(" ");
-			
-			//Serial.print("Number of Bytes to read: ");
-			//Serial.println(Serial2.available(), DEC);
-			for (int i = 1; i < ARRLEN; i++) {
-			  Serial.print(" ");
-			  incomingByte = Serial2.read() - 48;
-			  receivedMessage[i] = incomingByte;
-			  Serial.print(receivedMessage[i]);
-			  Serial.print(" ");
-			  //receivedMessage[i] = receivedMessage[i];
-			}
-			I2CupdateClock();
-		  }	
-		}
+	  msgCount = 1;
+	  while (msgCount < 8) {
+	    Serial.println("\nData read from Rx:");
+	    receivedMessage[0] = incomingByte;
+	    Serial.print(receivedMessage[0]);
+	    Serial.print(" ");
+	    //Serial.print("Number of Bytes to read: ");
+	    //Serial.println(Serial2.available(), DEC);
+	    for (int i = 1; i < ARRLEN; i++) {
+	      Serial.print(" ");
+	      incomingByte = Serial2.read() - 48;
+	      receivedMessage[i] = incomingByte;
+	      Serial.print(receivedMessage[i]);
+	      Serial.print(" ");
+	      //receivedMessage[i] = receivedMessage[i];
+	    }
+            I2CupdateClock();
+           }	
+      }
     
         /* Decode and consume the message */
         uint8_t type = receivedMessage[0];
@@ -113,11 +112,10 @@ void loop()
             break;
         }
       }
-    }
   
   message_pointer = 0;
   if(ship){
-    if(analogRead(Ain) > 200){
+    if(analogRead(Ain) > range){
       messageToBase[message_pointer] = 'N';
       message_pointer++;
       
@@ -144,7 +142,7 @@ void loop()
       delay(1000);
     }
   } else {
-    if(analogRead(Ain) < 200){
+    if(analogRead(Ain) < range){
       messageToBase[message_pointer] = 'S';
       message_pointer++;
       Serial.println();
