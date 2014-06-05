@@ -61,10 +61,10 @@ int convertToHex(int value)
 int convertToInt(char val) 
 {
 	
-	//result = (val >> 4) * 10;
-	//result += val & 0x0F;
-	//return result - 6;
-	return val;
+	result = (val >> 4) * 10;
+	result += val & 0x0F;
+	return result - 6;
+	//return val;
 }
 
 void function_pt(void *ptr, size_t size, size_t nmemb, void *stream) {
