@@ -255,7 +255,7 @@ int main(void) {
                         }
                         printf("\nRx Data:     ");
                         for (i = 0; i < leng; i++) {
-                                printf("%i ", message[i]);
+                                printf("%c ", message[i]);
                         }
 			printf("\n");
                         if (message[0] == 'S' || message[0] == 'N')      //received Ship Arrival/Departure notification, create thread to send data to API
