@@ -15,6 +15,7 @@ var express = require('express'),
         mode: "timelapse",
         output: "./photo/img.jpg",
         encoding: "jpg",
+        rotation: 315,
         timelapse: 200,
         timeout: 86400000
     }),
