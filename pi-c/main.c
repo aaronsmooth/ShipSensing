@@ -229,7 +229,7 @@ int main(void) {
                         	}
                         	printf("Rx Data:     ");
                         	for (i = 0; i < leng; i++) {
-                                	printf("%x ", message[i]);
+                                	printf("%i ", message[i]);
                         	}
                         	if (message[0] == 'A') status = 0;      //received acknowledgment, change to normal status
                         	else status = 1;                        //received an unknown message, change to panic status
@@ -255,7 +255,7 @@ int main(void) {
                         }
                         printf("\nRx Data:     ");
                         for (i = 0; i < leng; i++) {
-                                printf("%c ", message[i]);
+                                printf("%i ", message[i]);
                         }
 			printf("\n");
                         if (message[0] == 'S' || message[0] == 'N')      //received Ship Arrival/Departure notification, create thread to send data to API
