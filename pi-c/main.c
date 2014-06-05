@@ -53,8 +53,8 @@ void setMessage(char firstChar, time_t rawtime)
 
 int convertToHex(int value) 
 {
-	result = (value / 10) << 4;
-	result = result | (value % 10);
+	result = (value / 16) << 4;
+	result = result | (value % 16);
 	return result;
 }
 
@@ -63,8 +63,7 @@ int convertToInt(char val)
 	
 	result = (val >> 4) * 10;
 	result += val & 0x0F;
-	return result - 6;
-	//return val;
+	return result;
 }
 
 void function_pt(void *ptr, size_t size, size_t nmemb, void *stream) {
