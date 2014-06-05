@@ -16,6 +16,7 @@ int status_flag = 0;  //0 = default state, 1 = a message was sent awaiting ackno
 int incomingByte = 0;
 boolean lc = true;
 int state_change = 0;  //0 = no state change, 1 means that a ship recently left/arrived
+int msgCount = 0;
 
 
 // Create arrays for holding data for sending/receiving.
@@ -49,25 +50,32 @@ void loop()
 {
   /* Try to read a packet off serial */
     if (Serial2.available() > 0) {
+	  delay(1000); //give time for xbee to receive all of the message
       incomingByte = Serial2.read() - 48;
-      //Serial.print(Serial2.read() - 0x30, HEX);
-      //Serial.print(" ");
       if (incomingByte == 72 || incomingByte == 65) {
-        Serial.println("\nData read from Rx:");
-        receivedMessage[0] = incomingByte;
-        Serial.print(receivedMessage[0]);
-        Serial.print(" ");
-        //Serial.print("Number of Bytes to read: ");
-        //Serial.println(Serial2.available(), DEC);
-        for (int i = 1; i < ARRLEN; i++) {
-          Serial.print(" ");
-          incomingByte = Serial2.read() - 48;
-          receivedMessage[i] = incomingByte;
-          Serial.print(receivedMessage[i]);
-          Serial.print(" ");
-          //receivedMessage[i] = receivedMessage[i];
-        }
-        I2CupdateClock();
+	    msgCount = 1;
+		while (msgCount < 8) {
+		
+		
+		
+			Serial.println("\nData read from Rx:");
+			receivedMessage[0] = incomingByte;
+			Serial.print(receivedMessage[0]);
+			Serial.print(" ");
+			
+			//Serial.print("Number of Bytes to read: ");
+			//Serial.println(Serial2.available(), DEC);
+			for (int i = 1; i < ARRLEN; i++) {
+			  Serial.print(" ");
+			  incomingByte = Serial2.read() - 48;
+			  receivedMessage[i] = incomingByte;
+			  Serial.print(receivedMessage[i]);
+			  Serial.print(" ");
+			  //receivedMessage[i] = receivedMessage[i];
+			}
+			I2CupdateClock();
+		  }	
+		}
     
         /* Decode and consume the message */
         uint8_t type = receivedMessage[0];
