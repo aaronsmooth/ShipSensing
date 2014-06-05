@@ -12,7 +12,7 @@ Parse.Cloud.afterSave("Activity", function(request, response) {
     Parse.Push.send({
         where: query,
         data: {
-            alert: "Vessel arrived at EB1",
+            alert: "There is some activity at EB1.",
             title: "Dock Monitor"
         }
     }, {
