@@ -48,7 +48,9 @@ public class ActivityAdapter extends ArrayAdapter<VesselActivity> {
 		String time = enteredAt.substring(enteredAt.indexOf("2014") + 4,
 				enteredAt.length());
 		String day = getStringDay(arrivalDate.getDay());
+		String status = activity.status();
 
+		convertView.setTag(R.string.status, status);
 		convertView.setTag(R.string.day, day);
 		convertView.setTag(R.string.date, date);
 		convertView.setTag(R.string.time, time);

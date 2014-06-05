@@ -40,13 +40,14 @@ public final class R {
         public static final int right_arrow=0x7f020006;
     }
     public static final class id {
-        public static final int action_back=0x7f0a0006;
+        public static final int action_back=0x7f0a0007;
         public static final int activity_id=0x7f0a0000;
-        public static final int activity_list=0x7f0a0005;
-        public static final int date=0x7f0a0002;
-        public static final int day=0x7f0a0001;
-        public static final int photo=0x7f0a0004;
-        public static final int time=0x7f0a0003;
+        public static final int activity_list=0x7f0a0006;
+        public static final int date=0x7f0a0003;
+        public static final int day=0x7f0a0002;
+        public static final int photo=0x7f0a0005;
+        public static final int status=0x7f0a0001;
+        public static final int time=0x7f0a0004;
     }
     public static final class layout {
         public static final int activity_row_item=0x7f030000;
@@ -65,6 +66,7 @@ public final class R {
         public static final int image=0x7f070005;
         public static final int refresh=0x7f070008;
         public static final int settings=0x7f070007;
+        public static final int status=0x7f070009;
         public static final int time=0x7f070002;
     }
     public static final class style {

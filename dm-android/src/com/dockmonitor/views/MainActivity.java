@@ -81,6 +81,7 @@ public class MainActivity extends Activity implements OnItemClickListener {
 			public void done(byte[] bytes, ParseException e) {
 				Intent detail = new Intent(getApplicationContext(),
 						DetailActivity.class);
+				detail.putExtra("status", view.getTag(R.string.status).toString());
 				detail.putExtra("day", view.getTag(R.string.day).toString());
 				detail.putExtra("date", view.getTag(R.string.date).toString());
 				detail.putExtra("time", view.getTag(R.string.time).toString());

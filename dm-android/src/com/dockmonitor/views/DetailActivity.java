@@ -22,9 +22,7 @@ import com.dockmonitor.R;
 
 public class DetailActivity extends Activity {
 
-	private TextView dayView;
-	private TextView dateView;
-	private TextView timeView;
+	private TextView statusView, dayView, dateView, timeView;
 	private ImageView imageView;
 
 	public void onCreate(Bundle savedInstanceState) {
@@ -35,6 +33,7 @@ public class DetailActivity extends Activity {
 			return;
 		}
 		// get data via the key
+		String status = extras.getString("status").trim();
 		String day = extras.getString("day").trim();
 		String date = extras.getString("date").trim();
 		String time = extras.getString("time").trim();
@@ -43,6 +42,8 @@ public class DetailActivity extends Activity {
 		imageView = (ImageView) findViewById(R.id.photo);
 
 		imageView.setImageBitmap(bmp);
+		statusView = (TextView) findViewById(R.id.status);
+		statusView.setText(status);
 		dayView = (TextView) findViewById(R.id.day);
 		dayView.setText(day);
 		dateView = (TextView) findViewById(R.id.date);
