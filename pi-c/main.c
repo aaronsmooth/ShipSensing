@@ -53,9 +53,10 @@ void setMessage(char firstChar, time_t rawtime)
 
 int convertToHex(int value) 
 {
-	result = (value / 16) << 4;
-	result = result | (value % 16);
-	return result;
+	//result = (value / 16) << 4;
+	//result = result | (value % 16);
+	//return result;
+	return value;
 }
 
 int convertToInt(char val) 
