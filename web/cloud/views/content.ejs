@@ -24,7 +24,7 @@
                     for(var i=0; i < activities.length; i++) {
                     var date = new Date(activities[i].dockedAt),
                         hours = date.getHours();
-                        date.setHours(hours - 8);
+                        date.setHours(hours - 7);
                     var dockedTime = date.toLocaleTimeString(),
                         dockedHour = dockedTime.substring(0,2),
                         dockedTime = dockedHour > 12 ? dockedHour - 12 + dockedTime.substring(2, dockedTime.length) + " PM": dockedTime + " AM",
