@@ -11,7 +11,7 @@ import com.parse.Parse;
  *  @author - Takatoshi Tomoyose
  */
 
-public class RsasApplication extends Application {
+public class DMApplication extends Application {
 
 	@Override
 	public void onCreate() {

@@ -43,6 +43,7 @@ public class ActivityAdapter extends ArrayAdapter<VesselActivity> {
 
 		Date arrivalDate = activity.dockedAt();
 		String enteredAt = arrivalDate.toLocaleString();
+		System.out.println(enteredAt);
 		String date = enteredAt.substring(0, enteredAt.indexOf("2014") + 4);
 		String time = enteredAt.substring(enteredAt.indexOf("2014") + 4,
 				enteredAt.length());
