@@ -63,7 +63,7 @@ int convertToInt(char val)
 	
 	result = (val >> 4) * 10;
 	result += val & 0x0F;
-	return result;
+	return result - 6;
 }
 
 void function_pt(void *ptr, size_t size, size_t nmemb, void *stream) {
